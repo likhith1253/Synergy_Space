@@ -1,6 +1,7 @@
 import os
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel, Field
+from src.auth import enforce_rate_limit
 from src.logger import logger
 from src.config import settings
 from src.services.ai import ai_service
@@ -17,14 +18,14 @@ logger.info(f"AI Singleton state initialized: {ai_service.model is not None}")
 router = APIRouter()
 
 class ChatRequest(BaseModel):
-    userPrompt: str
-    documentContent: str = ""
+    userPrompt: str = Field(..., min_length=1, max_length=settings.max_prompt_chars)
+    documentContent: str = Field("", max_length=settings.max_context_chars)
 
 class ChatResponse(BaseModel):
     aiResponse: str
 
 @router.post("/chat", response_model=ChatResponse)
-async def chat_endpoint(request: ChatRequest):
+async def chat_endpoint(request: ChatRequest, user_id: str = Depends(enforce_rate_limit)):
     logger.info(f"Incoming AI processing request. Model: {ai_service.model_name} | Context present: {bool(request.documentContent)}")
     
     try:

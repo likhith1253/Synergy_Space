@@ -10,6 +10,9 @@ import { seedDemoWorkspace } from '../utils/demo-seeder';
 const prisma = getPrismaClient();
 const logger = createLogger('auth-service');
 
+// Hash of a random value, used only to equalise login timing for unknown accounts
+const DUMMY_HASH = bcrypt.hashSync(crypto.randomBytes(16).toString('hex'), 10);
+
 export class AuthService {
     async register(data: SignupUser) {
         logger.info(`[AuthService] register: Attempting registration for ${data.email}`);
@@ -19,7 +22,12 @@ export class AuthService {
         });
 
         if (existingUser) {
-            throw new Error('User already exists');
+            // Respond exactly as for a new address so the endpoint cannot be used to enumerate accounts
+            logger.info('[AuthService] register: address already registered, no verification issued');
+            return {
+                success: true,
+                message: 'Verification email sent. Please check your inbox (or backend console) to complete registration.'
+            };
         }
 
         let invitation = null;
@@ -196,6 +204,8 @@ export class AuthService {
         });
 
         if (!user || !user.password_hash) {
+            // Spend comparable time so response latency does not reveal whether the account exists
+            await bcrypt.compare(data.password, DUMMY_HASH);
             throw new Error('Invalid credentials');
         }
 

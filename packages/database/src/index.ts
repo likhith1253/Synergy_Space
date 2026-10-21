@@ -36,5 +36,6 @@ export async function disconnectPrisma(): Promise<void> {
     }
 }
 
+export * from './access';
 export { initializeDatabase, checkDatabaseHealth } from './bootstrap';
 export type { DatabaseBootstrapResult } from './bootstrap';

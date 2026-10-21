@@ -4,7 +4,8 @@
  */
 
 import { PrismaClient, Project } from '@collab/database';
-import { ProjectNotFoundError, OrganizationNotFoundError } from '../utils/errors';
+import { ProjectNotFoundError, OrganizationNotFoundError, ForbiddenError } from '../utils/errors';
+import { requireProjectAccess, listAccessibleProjectIds } from './access.service';
 
 const prisma = new PrismaClient();
 
@@ -24,6 +25,18 @@ export async function createProject(
 
     if (!organization) {
         throw new OrganizationNotFoundError();
+    }
+
+    // The caller must belong to the organization they are creating a project in
+    const [user, membership] = await Promise.all([
+        prisma.user.findUnique({ where: { id: userId }, select: { organization_id: true } }),
+        prisma.organizationMember.findUnique({
+            where: { organization_id_user_id: { organization_id: organizationId, user_id: userId } },
+            select: { id: true }
+        })
+    ]);
+    if (user?.organization_id !== organizationId && !membership) {
+        throw new ForbiddenError('You are not a member of this organization');
     }
 
     const project = await prisma.project.create({
@@ -53,9 +66,10 @@ export async function createProject(
  */
 export async function listProjects(userId: string) {
     // FALLBACK: Use simple query until Prisma Client is regenerated
+    const projectIds = await listAccessibleProjectIds(userId);
     const projects = await prisma.project.findMany({
         where: {
-            owner_id: userId
+            id: { in: projectIds }
         },
         // Remove include until schema update is applied
         // include: {
@@ -81,14 +95,8 @@ export async function listProjects(userId: string) {
  * Get a project by ID (ensuring ownership)
  */
 export async function getProjectById(projectId: string, userId: string) {
-    const project = await prisma.project.findFirst({
-        where: {
-            id: projectId,
-            owner_id: userId
-        },
-        // Remove include until schema update is applied
-        // include: { team_members: ... }
-    });
+    await requireProjectAccess(projectId, userId, 'read');
+    const project = await prisma.project.findUnique({ where: { id: projectId } });
 
     if (!project) {
         throw new ProjectNotFoundError();
@@ -111,17 +119,8 @@ export async function getProjectById(projectId: string, userId: string) {
  * Delete a project and all its documents
  */
 export async function deleteProject(projectId: string, userId: string) {
-    // Find the project and verify ownership
-    const project = await prisma.project.findFirst({
-        where: {
-            id: projectId,
-            owner_id: userId
-        }
-    });
-
-    if (!project) {
-        throw new ProjectNotFoundError();
-    }
+    // Only the owner may delete a project
+    await requireProjectAccess(projectId, userId, 'manage');
 
     // Delete all documents in the project first (cascade)
     // Delete document versions first

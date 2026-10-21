@@ -4,7 +4,7 @@
  */
 
 import { PrismaClient, Document, DocumentVersion } from '@collab/database';
-import { DocumentNotFoundError, ProjectNotFoundError } from '../utils/errors';
+import { requireProjectAccess, requireDocumentAccess, listAccessibleProjectIds } from './access.service';
 
 const prisma = new PrismaClient();
 
@@ -16,14 +16,8 @@ export async function createDocument(
     projectId: string,
     userId: string
 ) {
-    // Verify project exists
-    const project = await prisma.project.findUnique({
-        where: { id: projectId }
-    });
-
-    if (!project) {
-        throw new ProjectNotFoundError();
-    }
+    // Creating a document requires write access to the project
+    await requireProjectAccess(projectId, userId, 'write');
 
     const document = await prisma.document.create({
         data: {
@@ -45,14 +39,7 @@ export async function createDocument(
  * List documents in a project
  */
 export async function listDocuments(projectId: string, userId: string) {
-    // Verify project exists
-    const project = await prisma.project.findUnique({
-        where: { id: projectId }
-    });
-
-    if (!project) {
-        throw new ProjectNotFoundError();
-    }
+    await requireProjectAccess(projectId, userId, 'read');
 
     const documents = await prisma.document.findMany({
         where: { project_id: projectId },
@@ -72,16 +59,9 @@ export async function listDocuments(projectId: string, userId: string) {
  * List ALL documents for the user (owned or collaborator)
  */
 export async function listAllDocuments(userId: string) {
-    // FALLBACK: Use safer query
+    const projectIds = await listAccessibleProjectIds(userId);
     const documents = await prisma.document.findMany({
-        where: {
-            owner_id: userId
-            // Remove collaborator check until schema update
-            // OR: [
-            //     { owner_id: userId },
-            //     { project: { team_members: { some: { user_id: userId } } } }
-            // ]
-        },
+        where: { project_id: { in: projectIds } },
         include: {
             project: {
                 select: { name: true }
@@ -105,13 +85,7 @@ export async function listAllDocuments(userId: string) {
  * Get a single document by ID
  */
 export async function getDocument(documentId: string, userId: string) {
-    const document = await prisma.document.findUnique({
-        where: { id: documentId }
-    });
-
-    if (!document) {
-        throw new DocumentNotFoundError();
-    }
+    const { document } = await requireDocumentAccess(documentId, userId, 'read');
 
     let contentStr = '';
     if (document.yjs_binary_state) {
@@ -143,14 +117,8 @@ export async function updateDocument(
     userId: string,
     updates: { title?: string; content?: unknown }
 ) {
-    // Verify document exists
-    const existing = await prisma.document.findUnique({
-        where: { id: documentId }
-    });
-
-    if (!existing) {
-        throw new DocumentNotFoundError();
-    }
+    // Viewers may read but not modify
+    await requireDocumentAccess(documentId, userId, 'write');
 
     const data: { title?: string; yjs_binary_state?: Buffer } = {};
     if (updates.title !== undefined) {
@@ -183,14 +151,8 @@ export async function updateDocument(
  * Delete a document and its versions
  */
 export async function deleteDocument(documentId: string, userId: string) {
-    // Verify document exists
-    const document = await prisma.document.findUnique({
-        where: { id: documentId }
-    });
-
-    if (!document) {
-        throw new DocumentNotFoundError();
-    }
+    // Only the project owner or an admin may delete
+    await requireDocumentAccess(documentId, userId, 'delete');
 
     // Delete versions first
     await prisma.documentVersion.deleteMany({
@@ -213,14 +175,7 @@ export async function createVersion(
     name: string,
     userId: string
 ) {
-    // Verify document exists
-    const document = await prisma.document.findUnique({
-        where: { id: documentId }
-    });
-
-    if (!document) {
-        throw new DocumentNotFoundError();
-    }
+    const { document } = await requireDocumentAccess(documentId, userId, 'write');
 
     // Create version with current document state
     const version = await prisma.documentVersion.create({
@@ -243,14 +198,7 @@ export async function createVersion(
  * List version history for a document
  */
 export async function listVersions(documentId: string, userId: string) {
-    // Verify document exists
-    const document = await prisma.document.findUnique({
-        where: { id: documentId }
-    });
-
-    if (!document) {
-        throw new DocumentNotFoundError();
-    }
+    await requireDocumentAccess(documentId, userId, 'read');
 
     const versions = await prisma.documentVersion.findMany({
         where: { document_id: documentId },

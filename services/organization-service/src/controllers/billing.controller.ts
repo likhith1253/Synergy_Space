@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Stripe from 'stripe';
 import { getPrismaClient } from '@collab/database';
 import { config } from '../config';
+import { AuthRequest } from '../middleware/auth.middleware';
 // @ts-ignore
 import { createLogger } from '@packages/logger';
 
@@ -27,12 +28,39 @@ const PLANS = {
     }
 };
 
+/** Only same-origin redirect targets (the configured frontend) are accepted. */
+const safeRedirect = (candidate: unknown, fallback: string): string => {
+    if (typeof candidate !== 'string' || !config.clientUrl) return fallback;
+    try {
+        const target = new URL(candidate);
+        const allowed = new URL(config.clientUrl);
+        return target.origin === allowed.origin ? target.toString() : fallback;
+    } catch {
+        return fallback;
+    }
+};
+
 export const createCheckoutSession = async (req: Request, res: Response) => {
     try {
         const { organizationId, planId, successUrl, cancelUrl } = req.body;
+        const userId = (req as AuthRequest).user!.userId;
 
-        if (!organizationId || !planId) {
+        if (typeof organizationId !== 'string' || typeof planId !== 'string') {
             return res.status(400).json({ error: 'Missing organizationId or planId' });
+        }
+
+        // The client sends a plan key; the Stripe price id is resolved server-side
+        const plan = Object.prototype.hasOwnProperty.call(PLANS, planId) ? PLANS[planId as keyof typeof PLANS] : undefined;
+        if (!plan) {
+            return res.status(400).json({ error: 'Unknown plan' });
+        }
+
+        // Only an owner/admin of the organization may start a subscription for it
+        const membership = await prisma.organizationMember.findUnique({
+            where: { organization_id_user_id: { organization_id: organizationId, user_id: userId } }
+        });
+        if (!membership || !['owner', 'admin'].includes(membership.role)) {
+            return res.status(403).json({ error: 'Only an organization owner or admin can manage billing' });
         }
 
         const organization = await prisma.organization.findUnique({
@@ -68,15 +96,15 @@ export const createCheckoutSession = async (req: Request, res: Response) => {
             payment_method_types: ['card'],
             line_items: [
                 {
-                    price: planId,
+                    price: plan.priceId,
                     quantity: 1,
                 },
             ],
             metadata: {
                 organizationId: organization.id
             },
-            success_url: successUrl || `${config.clientUrl}/billing/success`,
-            cancel_url: cancelUrl || `${config.clientUrl}/billing/cancel`,
+            success_url: safeRedirect(successUrl, `${config.clientUrl}/billing/success`),
+            cancel_url: safeRedirect(cancelUrl, `${config.clientUrl}/billing/cancel`),
         });
 
         res.json({ sessionId: session.id, url: session.url });
@@ -101,7 +129,7 @@ export const handleWebhook = async (req: Request, res: Response) => {
         event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
     } catch (err: any) {
         logger.error(`Webhook Error: ${err.message}`);
-        return res.status(400).send(`Webhook Error: ${err.message}`);
+        return res.status(400).json({ error: 'Invalid webhook signature' });
     }
 
     try {

@@ -8,14 +8,14 @@ export class PasswordResetController {
     async requestPasswordReset(req: Request, res: Response) {
         try {
             const { email } = req.body;
-            if (!email) {
+            if (!email || typeof email !== 'string') {
                 res.status(400).json({ error: 'Email is required' });
                 return;
             }
             const result = await passwordResetService.requestPasswordReset(email);
             res.status(200).json(result);
         } catch (error: any) {
-            res.status(500).json({ error: error.message });
+            res.status(500).json({ error: 'Failed to process password reset request' });
         }
     }
 

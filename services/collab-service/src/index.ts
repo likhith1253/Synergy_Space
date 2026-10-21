@@ -1,118 +1,23 @@
 /**
  * Collaboration Service Entry Point
- * WebSocket server for real-time document collaboration using Yjs
- * 
+ * Socket.io server for realtime relay of document/slide/canvas updates, presence and chat.
+ *
  * Responsibilities:
- * - Socket.io server with JWT authentication
- * - Yjs document synchronization
- * - User presence/awareness
- * - Persistence to PostgreSQL (debounced)
+ * - Socket.io server with JWT authentication (see server.ts)
+ * - Per-room authorization against project membership (see handlers/collab.handler.ts)
+ * - Database bootstrap and graceful shutdown
+ *
+ * Content is relayed between clients; the server does not merge or persist it
+ * (persistence is via the document-service REST API).
  */
 
-import express from 'express';
-import http from 'http';
-import { Server } from 'socket.io';
-import cors from 'cors';
-import helmet from 'helmet';
-import morgan from 'morgan';
 import { config } from './config';
 import { logger } from './logger';
-import { healthCheck } from './health';
-import { verifyAccessToken, extractTokenFromHandshake } from './utils/jwt';
-import { AuthenticationError } from './utils/AppErrors';
+import { createCollabServer } from './server';
 import * as collabHandler from './handlers/collab.handler';
 import { disconnectPrisma, initializeDatabase } from '@collab/database';
 
-// ============================================================================
-// Express App Setup
-// ============================================================================
-
-const app = express();
-const server = http.createServer(app);
-
-// ============================================================================
-// Socket.io Server Setup
-// ============================================================================
-
-const io = new Server(server, {
-    cors: {
-        origin: '*',
-        methods: ['GET', 'POST'],
-        credentials: true
-    },
-    // Allow both WebSocket and polling transports
-    transports: ['websocket', 'polling']
-});
-
-// ============================================================================
-// Middleware
-// ============================================================================
-
-app.use(helmet());
-app.use(cors());
-app.use(express.json());
-app.use(morgan('combined'));
-
-// ============================================================================
-// Routes
-// ============================================================================
-
-app.get('/health', (req, res) => {
-    void healthCheck(req, res);
-});
-
-// ============================================================================
-// Socket.io Authentication Middleware
-// ============================================================================
-
-/**
- * JWT Authentication Middleware for Socket.io
- * Verifies token on connection and attaches user data to socket
- */
-io.use((socket, next) => {
-    try {
-        // Extract token from handshake
-        const token = extractTokenFromHandshake(socket.handshake);
-
-        if (!token) {
-            logger.warn(`Connection rejected: No token provided (socket: ${socket.id})`);
-            return next(new AuthenticationError('Authentication required'));
-        }
-
-        // Verify token
-        const decoded = verifyAccessToken(token);
-
-        // Register socket with user data
-        collabHandler.registerSocket(socket, decoded);
-
-        logger.info(`User authenticated: ${decoded.email} (socket: ${socket.id})`);
-        next();
-    } catch (error) {
-        if (error instanceof AuthenticationError) {
-            logger.warn(`Connection rejected: ${error.message} (socket: ${socket.id})`);
-            next(error);
-        } else {
-            logger.error('Unexpected authentication error:', error);
-            next(new AuthenticationError('Authentication failed'));
-        }
-    }
-});
-
-// ============================================================================
-// Socket.io Connection Handler
-// ============================================================================
-
-io.on('connection', (socket) => {
-    logger.info(`Client connected: ${socket.id}`);
-
-    // Setup collaboration event handlers
-    collabHandler.setupSocketHandlers(io, socket);
-
-    // Handle errors
-    socket.on('error', (error) => {
-        logger.error(`Socket error (${socket.id}):`, error);
-    });
-});
+const { server, io } = createCollabServer();
 
 // ============================================================================
 // Server Startup

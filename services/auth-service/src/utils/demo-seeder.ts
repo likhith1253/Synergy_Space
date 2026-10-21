@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 // @ts-ignore - Local module resolution
 import { createLogger } from '@packages/logger';
 
@@ -24,9 +25,14 @@ export async function seedDemoWorkspace(prisma: any) {
 
         // 2. Setup the Flagship Recruit Access User Profile
         let user = await prisma.user.findUnique({ where: { email: DEMO_EMAIL } });
-        const hashedPassword = await bcrypt.hash('DemoSecurePassword123!', 10);
+        // The demo account is only reachable through /demo-login (which issues a token directly).
+        // Its password is random and never disclosed, so it cannot be used with /login.
+        const hashedPassword = await bcrypt.hash(crypto.randomBytes(32).toString('hex'), 10);
 
-        if (!user) {
+        if (user) {
+            // Rotate any previously seeded well-known password
+            await prisma.user.update({ where: { id: user.id }, data: { password_hash: hashedPassword } });
+        } else {
             user = await prisma.user.create({
                 data: {
                     email: DEMO_EMAIL,

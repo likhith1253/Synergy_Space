@@ -10,35 +10,43 @@ import { createLogger } from '@packages/logger';
 const app = express();
 const logger = createLogger('api-gateway');
 
-// Trust proxy - Required for Render/Vercel to get correct client IP
-app.set('trust proxy', true);
+// Trust only the configured number of reverse-proxy hops (Render/Vercel terminate TLS in front of us).
+// Client-controlled headers such as CF-Connecting-IP / X-Real-IP / X-Original-Client-IP are NOT trusted:
+// they are overwritten below with the address Express derives from the trusted hops.
+app.set('trust proxy', config.trustProxyHops);
 
 // Pre-middleware to resolve Client IP and Request ID early
 app.use((req: any, res, next) => {
-    const clientIp = req.headers['cf-connecting-ip'] || 
-                     req.headers['x-original-client-ip'] || 
-                     req.headers['x-forwarded-for']?.toString().split(',')[0].trim() || 
-                     req.headers['x-real-ip'] || 
-                     req.ip || 
-                     req.socket.remoteAddress || 
-                     'unknown';
-                     
-    const requestId = req.headers['x-request-id'] || Math.random().toString(36).substring(7);
-    
+    const clientIp = req.ip || req.socket.remoteAddress || 'unknown';
+
+    // Request ids are for log correlation only; accept a well-formed one, otherwise generate our own
+    const incomingId = req.headers['x-request-id'];
+    const requestId = typeof incomingId === 'string' && /^[A-Za-z0-9_-]{1,64}$/.test(incomingId)
+        ? incomingId
+        : Math.random().toString(36).substring(2, 10);
+
     req.resolvedClientIp = clientIp;
     req.requestId = requestId;
-    
-    // Set headers on incoming req so downstream middleware sees them
+
+    // Overwrite (never append to) the headers downstream services read
     req.headers['x-original-client-ip'] = clientIp;
+    req.headers['x-forwarded-for'] = clientIp;
+    req.headers['x-real-ip'] = clientIp;
     req.headers['x-request-id'] = requestId;
-    
+
     next();
 });
 
 // Middleware
 app.use(helmet());
 app.use(cors({
-    origin: true,
+    origin: (origin, callback) => {
+        // Non-browser clients send no Origin header; browsers must match the allowlist
+        if (!origin || config.cors.allowedOrigins === '*' || config.cors.allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+        callback(null, false);
+    },
     credentials: true
 }));
 app.use(morgan('dev'));
@@ -236,10 +244,9 @@ app.use('/socket.io', createProxyMiddleware(getProxyOptions(config.services.coll
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
     logger.error(`[API Gateway Exception Intercepted]: ${err.message}`);
     res.setHeader('Content-Type', 'application/json');
-    res.status(500).json({ 
+    res.status(500).json({
         success: false,
-        error: 'Internal Server Error',
-        message: err.message || 'An unhandled exception block crashed an underlying microservice stream.'
+        error: 'Internal Server Error'
     });
 });
 

@@ -11,6 +11,12 @@ class Settings(BaseSettings):
     # Required variables (no default value = raises error if missing)
     gemini_api_key: Optional[str] = None
     
+    # Shared HS256 secret used by auth-service to sign access tokens (required to serve /ai/chat)
+    jwt_secret: Optional[str] = None
+    rate_limit_per_minute: int = 20
+    max_prompt_chars: int = 4000
+    max_context_chars: int = 50000
+
     # Optional with defaults
     cors_origin: str = "http://localhost:3000"
     mock_ai: bool = False

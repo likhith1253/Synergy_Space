@@ -5,6 +5,11 @@ import { createLogger } from '@packages/logger';
 
 const logger = createLogger('auth-service');
 
+const envInt = (key: string, fallback: number): number => {
+    const parsed = parseInt(process.env[key] || '', 10);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+};
+
 export function resolveClientIp(req: Request): string {
     const originalClientIp = req.headers['x-original-client-ip'];
     if (originalClientIp) {
@@ -27,17 +32,10 @@ export function resolveClientIp(req: Request): string {
 
 export const registerRateLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 5000, 
+    max: envInt('REGISTER_RATE_LIMIT_MAX', 30),
     standardHeaders: true,
     legacyHeaders: false,
-    keyGenerator: (req: Request) => {
-        const ip = resolveClientIp(req);
-        const email = req.body?.email || 'no-email';
-        const key = `register:${ip}:${email}`;
-        const requestId = (req as any).requestId || 'unknown';
-        (req as any).rateLimitKey = key;
-        return key;
-    },
+    keyGenerator: (req: Request) => `register:${resolveClientIp(req)}`,
     handler: (req: Request, res: Response, next: NextFunction, options: any) => {
         const ip = resolveClientIp(req);
         const email = req.body?.email || 'no-email';
@@ -57,7 +55,7 @@ export const registerRateLimiter = rateLimit({
 
 export const demoRateLimiter = rateLimit({
     windowMs: 1 * 60 * 1000,
-    max: 5000,
+    max: envInt('DEMO_RATE_LIMIT_MAX', 300),
     standardHeaders: true,
     legacyHeaders: false,
     keyGenerator: () => 'demo-login-global',
@@ -76,7 +74,7 @@ export const demoRateLimiter = rateLimit({
 
 export const authRateLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 5000,
+    max: envInt('AUTH_RATE_LIMIT_MAX', 300),
     standardHeaders: true,
     legacyHeaders: false,
     keyGenerator: (req: Request) => {
@@ -94,6 +92,27 @@ export const authRateLimiter = rateLimit({
                 code: 'TOO_MANY_REQUESTS',
                 message: 'Too many requests. Please slow down and try again.',
                 details: { limit: options.max, windowMs: options.windowMs }
+            }
+        });
+    }
+});
+
+/**
+ * Credential-stuffing / brute-force guard: keyed on the target account (not the
+ * client IP, which an attacker can vary), applied to login and password-reset.
+ */
+export const accountRateLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: envInt('ACCOUNT_RATE_LIMIT_MAX', 20),
+    standardHeaders: true,
+    legacyHeaders: false,
+    keyGenerator: (req: Request) => `account:${String(req.body?.email || req.body?.token || 'none').toLowerCase().slice(0, 256)}`,
+    handler: (req: Request, res: Response) => {
+        res.status(429).json({
+            success: false,
+            error: {
+                code: 'TOO_MANY_REQUESTS',
+                message: 'Too many attempts for this account. Please wait 15 minutes and try again.',
             }
         });
     }

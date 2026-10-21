@@ -1,4 +1,4 @@
-import { getSocket } from './socket'
+import { getAuthToken } from './auth'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -9,12 +9,13 @@ export interface ChatResponse {
 export const aiService = {
     async chat(userPrompt: string, documentContent: string): Promise<string> {
         try {
-            console.log('Calling AI Service:', `${API_URL}/ai/chat`);
-            console.log('Request Body:', JSON.stringify({ userPrompt, documentContent }));
+            const token = getAuthToken()
             const response = await fetch(`${API_URL}/ai/chat`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    // The AI endpoint requires a valid access token (it spends paid model quota)
+                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
                 },
                 body: JSON.stringify({
                     userPrompt,

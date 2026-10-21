@@ -12,12 +12,13 @@ import { ValidationError } from '../utils/errors';
  */
 export async function getProjectTeam(req: Request, res: Response): Promise<void> {
     const { projectId } = req.params;
+    const userId = req.user!.userId;
 
     if (!projectId) {
         throw new ValidationError('Project ID is required');
     }
 
-    const team = await teamService.getProjectTeam(projectId);
+    const team = await teamService.getProjectTeam(projectId, userId);
     res.status(200).json(team);
 }
 

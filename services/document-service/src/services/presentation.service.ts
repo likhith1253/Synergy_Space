@@ -4,7 +4,7 @@
  */
 
 import { PrismaClient } from '@collab/database';
-import { ProjectNotFoundError, ValidationError } from '../utils/errors';
+import { requireProjectAccess, requirePresentationAccess } from './access.service';
 
 const prisma = new PrismaClient();
 
@@ -17,17 +17,7 @@ export async function createPresentation(
     userId: string,
     template?: string
 ) {
-    // Verify project exists and user is owner
-    const project = await prisma.project.findFirst({
-        where: {
-            id: projectId,
-            owner_id: userId
-        }
-    });
-
-    if (!project) {
-        throw new ProjectNotFoundError();
-    }
+    await requireProjectAccess(projectId, userId, 'write');
 
     const presentation = await prisma.presentation.create({
         data: {
@@ -44,17 +34,7 @@ export async function createPresentation(
  * List presentations for a project
  */
 export async function listPresentations(projectId: string, userId: string) {
-    // Verify project exists and user is owner
-    const project = await prisma.project.findFirst({
-        where: {
-            id: projectId,
-            owner_id: userId
-        }
-    });
-
-    if (!project) {
-        throw new ProjectNotFoundError();
-    }
+    await requireProjectAccess(projectId, userId, 'read');
 
     const presentations = await prisma.presentation.findMany({
         where: { project_id: projectId },
@@ -68,19 +48,7 @@ export async function listPresentations(projectId: string, userId: string) {
  * Get a single presentation
  */
 export async function getPresentation(presentationId: string, userId: string) {
-    const presentation = await prisma.presentation.findUnique({
-        where: { id: presentationId },
-        include: { project: true }
-    });
-
-    if (!presentation) {
-        throw new ValidationError('Presentation not found');
-    }
-
-    // @ts-ignore
-    if (presentation.project.owner_id !== userId) {
-        throw new ProjectNotFoundError();
-    }
+    const { presentation } = await requirePresentationAccess(presentationId, userId, 'read');
 
     return presentation;
 }

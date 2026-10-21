@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { PrismaClient } from '@collab/database';
 import { EmailService } from '../services/email.service';
 import crypto from 'crypto';
+import { isTeamRole } from '@collab/database';
 
 const prisma = new PrismaClient();
 const emailService = new EmailService();
@@ -12,6 +13,10 @@ export class InviteController {
         try {
             const { projectId } = req.params;
             const { email, role = 'viewer' } = req.body;
+            if (typeof email !== 'string' || !isTeamRole(role)) {
+                res.status(400).json({ error: 'A valid email and a role of admin, editor or viewer are required' });
+                return;
+            }
             // User ID from auth middleware
             // @ts-ignore
             const userId = req.user?.userId;
@@ -92,7 +97,7 @@ export class InviteController {
 
         } catch (error: any) {
             console.error('Create Invite Error:', error);
-            res.status(500).json({ error: 'Failed to create invitation', details: error.message, stack: error.stack });
+            res.status(500).json({ error: 'Failed to create invitation' });
         }
     }
 

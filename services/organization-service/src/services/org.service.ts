@@ -38,6 +38,16 @@ export class OrgService {
         });
     }
 
+    /** The caller's role in the organization, or null when they are not a member. */
+    async getMemberRole(orgId: string, userId: string): Promise<string | null> {
+        if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(orgId)) return null;
+        const member = await prisma.organizationMember.findUnique({
+            where: { organization_id_user_id: { organization_id: orgId, user_id: userId } },
+            select: { role: true }
+        });
+        return member ? member.role : null;
+    }
+
     async getOrganization(orgId: string) {
         return await prisma.organization.findUnique({
             where: { id: orgId },

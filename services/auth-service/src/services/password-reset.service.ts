@@ -58,6 +58,10 @@ export class PasswordResetService {
     async resetPassword(token: string, newPassword: string) {
         logger.info(`[PasswordResetService] resetPassword: Attempting password reset`);
         
+        if (typeof token !== 'string' || typeof newPassword !== 'string' || newPassword.length < 8 || newPassword.length > 128) {
+            throw new Error('Password must be between 8 and 128 characters');
+        }
+
         const resetToken = await prisma.passwordResetToken.findUnique({
             where: { token }
         });
@@ -88,8 +92,8 @@ export class PasswordResetService {
             data: { password_hash: hashedPassword }
         });
 
-        // Delete the used reset token
-        await prisma.passwordResetToken.delete({ where: { id: resetToken.id } });
+        // Tokens are single use: remove this one and any other outstanding token for the account
+        await prisma.passwordResetToken.deleteMany({ where: { email: resetToken.email } });
 
         logger.info(`[PasswordResetService] resetPassword: Password reset successful for ${user.email}`);
 

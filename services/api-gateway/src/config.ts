@@ -42,7 +42,12 @@ export const config = {
             url: getRequiredUrl('AI_SERVICE_URL', 'http://localhost:8001'),
         },
     },
+    // Number of trusted reverse-proxy hops in front of the gateway (1 = Render's load balancer)
+    trustProxyHops: parseInt(process.env.TRUST_PROXY_HOPS || '1', 10),
     cors: {
-        origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+        // Comma-separated allowlist. When CORS_ORIGIN is unset every origin is reflected (development only).
+        allowedOrigins: process.env.CORS_ORIGIN
+            ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim().replace(/\/+$/, '')).filter(Boolean)
+            : ('*' as const),
     },
 };

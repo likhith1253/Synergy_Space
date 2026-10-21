@@ -4,7 +4,9 @@
  */
 
 import { PrismaClient } from '@collab/database';
-import { ProjectNotFoundError, UserNotFoundError, ValidationError } from '../utils/errors';
+import { ProjectNotFoundError, UserNotFoundError, ValidationError, ForbiddenError } from '../utils/errors';
+import { isTeamRole } from '@collab/database';
+import { requireProjectAccess } from './access.service';
 
 
 const prisma = new PrismaClient();
@@ -15,7 +17,8 @@ const teamMemberClient = (prisma as any).teamMember;
 /**
  * Get all team members for a project
  */
-export async function getProjectTeam(projectId: string) {
+export async function getProjectTeam(projectId: string, userId: string) {
+    await requireProjectAccess(projectId, userId, 'read');
     const members = await teamMemberClient.findMany({
         where: { project_id: projectId },
         include: {
@@ -50,6 +53,10 @@ export async function addTeamMember(
     role: string = 'viewer',
     currentUserId: string
 ) {
+    if (!isTeamRole(role)) {
+        throw new ValidationError('Role must be one of: admin, editor, viewer');
+    }
+
     // 1. Verify Project and Permissions (Owner check)
     const project = await prisma.project.findUnique({
         where: { id: projectId }
@@ -60,7 +67,7 @@ export async function addTeamMember(
     }
 
     if (project.owner_id !== currentUserId) {
-        throw new ValidationError('Only the project owner can add members');
+        throw new ForbiddenError('Only the project owner can add members');
     }
 
     // 2. Find User by Email
@@ -127,7 +134,7 @@ export async function removeTeamMember(
 
     // Allow owner to remove anyone, or user to leave (remove themselves)
     if (project.owner_id !== currentUserId && targetUserId !== currentUserId) {
-        throw new ValidationError('Insufficient permissions');
+        throw new ForbiddenError('Insufficient permissions');
     }
 
     // Prevent owner from leaving if they are the only owner (simplification)

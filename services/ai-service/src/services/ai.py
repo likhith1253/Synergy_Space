@@ -26,7 +26,7 @@ class AIService:
                 print(f"[AIService] INFO: Discovered supported models on key: {available_models}")
                 
                 # Check if our target model is actually available
-                target_full_name = f"models/{self.model_name}" if not self.model_name.startsWith("models/") else self.model_name
+                target_full_name = f"models/{self.model_name}" if not self.model_name.startswith("models/") else self.model_name
                 short_target_name = self.model_name.replace("models/", "")
                 
                 if target_full_name in available_models or f"models/{short_target_name}" in available_models:
@@ -93,13 +93,7 @@ class AIService:
 
             # 4. Generate asynchronous execution call using safe built-in definitions
             response = await self.model.generate_content_async(
-                contents=full_prompt,
-                safety_settings={
-                    genai.types.HarmCategory.HARM_CATEGORY_HARASSMENT: genai.types.HarmBlockThreshold.BLOCK_NONE,
-                    genai.types.HarmCategory.HARM_CATEGORY_HATE_SPEECH: genai.types.HarmBlockThreshold.BLOCK_NONE,
-                    genai.types.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: genai.types.HarmBlockThreshold.BLOCK_NONE,
-                    genai.types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: genai.types.HarmBlockThreshold.BLOCK_NONE,
-                }
+                contents=full_prompt
             )
             
             return response.text
@@ -112,7 +106,7 @@ class AIService:
                 return "The system AI engine is currently dealing with high concurrent traffic limits. Please resend your request in a brief moment."
 
             if os.getenv("MOCK_AI_ON_ERROR", "true").lower() == "true":
-                return f"I encountered an error interacting with Gemini. Auto-healing to sandbox backup mode. (Error details: {error_str})"
+                return "The AI provider returned an error. Please try again later."
             
             raise e
 

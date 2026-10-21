@@ -67,8 +67,9 @@ const startServer = async () => {
         process.exit(1);
     }
 
-    // Retry Loop for Demo Seeder (Fixes Demo failures on cold boot)
-    for (let i = 1; i <= 3; i++) {
+    // The demo workspace (a pre-provisioned owner account) is only created when demo mode is enabled
+    const demoEnabled = process.env.ENABLE_DEMO_MODE === 'true';
+    for (let i = 1; demoEnabled && i <= 3; i++) {
         try {
             await seedDemoWorkspace(prisma);
             logger.info('Demo workspace seeded successfully.');

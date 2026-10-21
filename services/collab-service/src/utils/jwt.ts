@@ -33,7 +33,7 @@ export interface DecodedToken extends TokenPayload, JwtPayload { }
  */
 export function verifyAccessToken(token: string): DecodedToken {
     try {
-        const decoded = jwt.verify(token, config.jwt.secret) as DecodedToken;
+        const decoded = jwt.verify(token, config.jwt.secret, { algorithms: ['HS256'] }) as DecodedToken;
         return decoded;
     } catch (error) {
         throw new AuthenticationError('Invalid or expired token');

@@ -54,6 +54,9 @@ services:
         generateValue: true
       - key: CORS_ORIGIN
         sync: false
+      # Set to "true" only if you want the public one-click demo account (/demo-login) enabled
+      - key: ENABLE_DEMO_MODE
+        sync: false
 
   # --------------------------------------------------------------------------------
   # 3. ORGANIZATION SERVICE
@@ -114,6 +117,8 @@ services:
           type: web
           name: auth-service
           envVarKey: JWT_SECRET
+      - key: CORS_ORIGIN
+        sync: false # Comma-separated frontend origin(s) allowed to open Socket.io connections
 
   # --------------------------------------------------------------------------------
   # 5. DOCUMENT SERVICE
@@ -171,6 +176,14 @@ services:
       - key: AI_MODEL
         value: gemini-2.5-flash
       - key: GEMINI_API_KEY
+        sync: false
+      # Must equal auth-service's JWT_SECRET: /ai/chat only serves callers with a valid access token
+      - key: JWT_SECRET
+        fromService:
+          type: web
+          name: auth-service
+          envVarKey: JWT_SECRET
+      - key: CORS_ORIGIN
         sync: false
 
 # --------------------------------------------------------------------------------

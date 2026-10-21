@@ -4,7 +4,7 @@
  */
 
 import { PrismaClient } from '@collab/database';
-import { ProjectNotFoundError, CanvasNotFoundError, UnauthorizedError } from '../utils/errors';
+import { requireProjectAccess, requireCanvasAccess } from './access.service';
 
 const prisma = new PrismaClient();
 
@@ -12,14 +12,7 @@ const prisma = new PrismaClient();
  * Get all canvases for a project
  */
 export async function getProjectCanvases(projectId: string, userId: string) {
-    // Verify project exists (same approach as documents service)
-    const project = await prisma.project.findUnique({
-        where: { id: projectId }
-    });
-
-    if (!project) {
-        throw new ProjectNotFoundError();
-    }
+    await requireProjectAccess(projectId, userId, 'read');
 
     // Get all canvases for the project
     const canvases = await prisma.$queryRaw`
@@ -45,14 +38,7 @@ export async function getProjectCanvases(projectId: string, userId: string) {
  * Get a single canvas by ID
  */
 export async function getCanvasById(canvasId: string, userId: string) {
-    // Verify canvas exists (simplified approach)
-    const canvas = await prisma.canvas.findUnique({
-        where: { id: canvasId }
-    });
-
-    if (!canvas) {
-        throw new CanvasNotFoundError();
-    }
+    const { canvas } = await requireCanvasAccess(canvasId, userId, 'read');
 
     return {
         id: canvas.id,
@@ -88,14 +74,7 @@ export async function getProjectCanvas(projectId: string, userId: string) {
  * Create a new canvas for a project
  */
 export async function createProjectCanvas(projectId: string, data: any, userId: string, name: string = 'Untitled Canvas') {
-    // Verify project exists (same approach as documents service)
-    const project = await prisma.project.findUnique({
-        where: { id: projectId }
-    });
-
-    if (!project) {
-        throw new ProjectNotFoundError();
-    }
+    await requireProjectAccess(projectId, userId, 'write');
 
     // Create new canvas
     const result = await prisma.$queryRaw`
@@ -120,14 +99,7 @@ export async function createProjectCanvas(projectId: string, data: any, userId: 
  * Update canvas
  */
 export async function updateCanvas(canvasId: string, data: any, userId: string, name?: string) {
-    // Verify canvas exists (simplified approach)
-    const canvas = await prisma.canvas.findUnique({
-        where: { id: canvasId }
-    });
-
-    if (!canvas) {
-        throw new CanvasNotFoundError();
-    }
+    await requireCanvasAccess(canvasId, userId, 'write');
 
     // Update canvas
     let result;
