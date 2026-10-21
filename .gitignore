@@ -40,3 +40,23 @@ coverage
 *.temp
 verify_*.txt
 verify_*.js
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Local databases, logs, backups
+*.db
+*.sqlite
+*.bak
+*.log
+doc_start_log.txt
+tsc-errors.txt
+models_*.txt
+
+# Environment (keep the templates)
+.env
+.env.*
+!.env.example

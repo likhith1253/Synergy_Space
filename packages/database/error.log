@@ -1,7 +1,0 @@
-Environment variables loaded from .env
-Prisma schema loaded from prisma\schema.prisma
-Datasource "db": PostgreSQL database "collab_db", schema "public" at "127.0.0.1:5432"
-
-Error: P1000: Authentication failed against database server at `127.0.0.1`, the provided database credentials for `collab_user` are not valid.
-
-Please make sure to provide valid database credentials for the database server at `127.0.0.1`.
