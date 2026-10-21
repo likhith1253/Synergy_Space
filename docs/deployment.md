@@ -1,6 +1,6 @@
 # Deployment Guide
 
-The deployment strategy for the Realtime_Collaborator requires coordination across edge networks and backend Virtual Private Servers (VPS) or containerized architectures since it leverages WebSocket statefulness and machine learning python scripts alongside standard Node endpoints. 
+The deployment strategy for the SynergySpace requires coordination across edge networks and backend Virtual Private Servers (VPS) or containerized architectures since it leverages WebSocket statefulness and machine learning python scripts alongside standard Node endpoints. 
 
 ## Cloud Infrastructure Setup
 

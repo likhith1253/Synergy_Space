@@ -1,6 +1,6 @@
 # API Reference
 
-The Realtime_Collaborator API is RESTful and utilizes the API Gateway as the primary routing mechanism. All requests to the frontend domain at `/api/*` are proxied to their respective backend macro-services.
+The SynergySpace API is RESTful and utilizes the API Gateway as the primary routing mechanism. All requests to the frontend domain at `/api/*` are proxied to their respective backend macro-services.
 
 ## Base URL
 `https://api.yourdomain.com/` (Production)

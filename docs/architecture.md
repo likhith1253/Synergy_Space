@@ -1,6 +1,6 @@
 # System Architecture
 
-The Realtime_Collaborator platform is built on an API-Gateway-driven microservices architecture. This structure ensures isolation of responsibilities, improved scalability, targeted tech stacks for respective jobs (Node.js vs Python), and resilient fault boundaries.
+The SynergySpace platform is built on an API-Gateway-driven microservices architecture. This structure ensures isolation of responsibilities, improved scalability, targeted tech stacks for respective jobs (Node.js vs Python), and resilient fault boundaries.
 
 ## Component Breakdown
 

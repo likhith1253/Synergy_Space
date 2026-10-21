@@ -1,6 +1,6 @@
 # Security & Authentication Strategy
 
-The Realtime_Collaborator implements a robust, detached security perimeter suitable for microservices. Given that multiple services act upon user data independently, verifying identity across the cluster relies heavily on cryptographically signed tokens.
+The SynergySpace implements a robust, detached security perimeter suitable for microservices. Given that multiple services act upon user data independently, verifying identity across the cluster relies heavily on cryptographically signed tokens.
 
 ## Authentication Strategy (JWT)
 1. **Login Negotiation:** Users authenticate via the `auth-service` by trading a validated Email and hashed Password for a JSON Web Token (JWT).

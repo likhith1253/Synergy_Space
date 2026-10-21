@@ -1,6 +1,6 @@
 # Stripe Payment Flow & Billing
 
-The Realtime_Collaborator platform establishes the necessary schemas to monetize the SaaS platform using a tenant-first model. Subscriptions are tied to the `Organization` entity rather than isolated `User` entities.
+The SynergySpace platform establishes the necessary schemas to monetize the SaaS platform using a tenant-first model. Subscriptions are tied to the `Organization` entity rather than isolated `User` entities.
 
 ## Database Integration
 The Prisma schema for `Organization` tracks critical billing metadata:
@@ -28,4 +28,4 @@ While the initial repository serves as the baseline, the planned Stripe integrat
 
 ## Security Considerations
 - The Node.js application utilizes the raw request body buffer when validating Stripe webhook signatures, ensuring payload integrity.
-- Client applications exclusively use `Stripe.js` to handle PCI-DSS sensitive credit card ingestion; the Realtime_Collaborator backend never natively processes or logs raw credit card PANs.
+- Client applications exclusively use `Stripe.js` to handle PCI-DSS sensitive credit card ingestion; the SynergySpace backend never natively processes or logs raw credit card PANs.

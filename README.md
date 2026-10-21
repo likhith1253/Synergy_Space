@@ -1,168 +1,124 @@
-# Real-Time Collaborative Document Editor
+# SynergySpace
 
-<p align="center">
-  <em>A powerful, real-time collaboration platform designed for seamless document editing, enriched with AI-assisted content generation.</em>
-</p>
+A real-time collaborative workspace: multi-user document editing, presentations, canvas and team chat, with AI writing assistance, organizations and role-based access. Built as a microservice monorepo.
 
-<p align="center">
-  <a href="docs/features.md"><strong>Features</strong></a> ·
-  <a href="docs/architecture.md"><strong>Architecture</strong></a> ·
-  <a href="docs/setup.md"><strong>Quick Start</strong></a> ·
-  <a href="#technology-stack"><strong>Tech Stack</strong></a>
-</p>
+**Live demo:** https://synergyspace-web.vercel.app (free-tier hosting, so the first load after idle can take ~30-60 s while the services wake up)
+
+[Features](docs/features.md) · [Architecture](docs/architecture.md) · [Setup](docs/setup.md) · [API reference](docs/api_reference.md) · [Security notes](docs/security.md)
 
 ---
 
-## 📖 Overview
+## What it does
 
-Built on a modern microservices architecture, this application solves the problem of disconnected workflows by merging live multi-user synchronization, intelligent AI writing tools, and team organization into a single cohesive workspace.
+- **Live co-editing** over WebSockets (Socket.IO) with [Yjs](https://github.com/yjs/yjs) CRDTs, so concurrent edits from several users merge without conflicts.
+- **AI assistance** (text generation, summarization, autocomplete) served by a separate Python/FastAPI service that calls Google Gemini.
+- **Workspaces:** organizations, projects, teams, email invitations, and per-user roles.
+- **Content types:** documents with saved version snapshots, slide presentations, a canvas, and in-app messages.
+- **Auth:** email/password sign-up with verification, JWT sessions, password reset.
+- **Billing:** Stripe Checkout from the pricing page, with the subscription tied to the organization.
 
-**Live Deployment:** *[Insert Production URL Here]*
+## Architecture
 
----
-
-## <a id="key-features"></a>✨ Key Features
-
-- ⚡ **Real-Time Collaboration:** Sub-millisecond latent document synchronization powered by WebSockets and CRDTs (Yjs).
-- 🤖 **AI-Powered Assistance:** Context-aware text generation, summarization, and autocomplete using Google Gemini.
-- 🔒 **Secure Workspace Management:** strict Role-Based Access Control (RBAC) inside Organizations and Projects.
-- 💾 **Robust Persistence:** Immutable document version histories backing up real-time memory states.
-- 🚀 **Scalable Infrastructure:** Microservices deployment ensuring single points of failure do not cascade across the domain.
-
----
-
-## <a id="system-architecture"></a>🏗️ System Architecture
-
-Our distributed architecture routes all client communication through a central API Gateway into specialized microservices, isolating concerns such as real-time sync, authentication, document storage, and AI processing.
+All client traffic goes through one API gateway that routes to the individual services.
 
 ```mermaid
 graph TD
-    %% User and Edge
-    User([End User]) <-->|HTTPS/WebSocket| Frontend[Next.js Web App]
-    Frontend <-->|HTTPS/WebSocket| Gateway[API Gateway]
+    User([User]) <-->|HTTPS / WebSocket| Web[Next.js web app]
+    Web <-->|HTTPS / WebSocket| Gateway[API Gateway]
 
-    %% Microservices Routing
-    Gateway -->|/auth| Auth[Auth Service]
-    Gateway -->|/orgs & /billing| Org[Organization Service]
-    Gateway -->|/documents & /projects| Doc[Document Service]
-    Gateway <-->|/socket.io| Collab[Collaboration Service]
-    Gateway -->|/ai| AI[AI Service]
+    Gateway -->|/auth| Auth[Auth service]
+    Gateway -->|/orgs, /billing| Org[Organization service]
+    Gateway -->|/documents, /projects| Doc[Document service]
+    Gateway <-->|/socket.io| Collab[Collaboration service]
+    Gateway -->|/ai| AI[AI service - FastAPI]
 
-    %% Internal Services Logic
-    Collab <-->|Flushes state| Doc
-    AI -->|Generates Content| ExternalAI([Google Gemini API])
-    Org -->|Tracks Subscriptions| Stripe([Stripe API])
+    Collab <-->|persists state| Doc
+    AI --> Gemini([Google Gemini API])
+    Org --> Stripe([Stripe API])
 
-    %% Database Ties
-    Auth -.-> DB[(PostgreSQL Database)]
+    Auth -.-> DB[(PostgreSQL)]
     Org -.-> DB
     Doc -.-> DB
-
-    classDef specific fill:#f9f,stroke:#333,stroke-width:2px;
-    class ExternalAI,Stripe specific;
 ```
 
-> **Note:** Detailed sequence diagrams and component breakdowns are available in the [`docs/`](docs/) directory.
+Design notes and honest trade-offs:
 
----
+- Services share a single PostgreSQL database through a shared Prisma package (`packages/database`). That keeps the project simple to run, but it means the services are not independently deployable data-wise.
+- The gateway is a single instance and the database is a single instance, so this is a clean service separation, not a high-availability setup.
+- Real-time sync is client-server (clients talk to the collaboration service), not peer-to-peer. No latency benchmark has been published yet.
 
-## 💻 Visual Tour
+## Screenshots
 
-| Home Dashboard | Editor Interface | Payment Gateway |
+| Dashboard | Editor | Pricing / checkout |
 |:---:|:---:|:---:|
-| ![Dashboard](docs/images/screenshot_home.png) | ![Editor](docs/images/editor_view.png) | ![Payment Gateway](docs/images/payment_page.png) |
+| ![Dashboard](docs/images/screenshot_home.png) | ![Editor](docs/images/editor_view.png) | ![Payment](docs/images/payment_page.png) |
 
----
+## Tech stack
 
-## <a id="technology-stack"></a>🛠️ Technology Stack
-
-| Ecosystem | Primary Technologies |
+| Area | Technologies |
 |---|---|
-| **Frontend** | Next.js, React, Tailwind CSS, Lucide Icons |
-| **Backend & APIs** | Node.js, Express, Socket.io, Yjs |
-| **AI Service** | Python, FastAPI, Google Generative AI (Gemini) SDK |
-| **Database & ORM** | PostgreSQL, Prisma |
-| **Hosting & Deployment**| Vercel (Frontend), Render (Backend Services and Database) |
+| Frontend | Next.js, React, TypeScript, Tailwind CSS |
+| Backend services | Node.js, Express, TypeScript, Socket.IO, Yjs |
+| AI service | Python, FastAPI, Google Generative AI SDK |
+| Data | PostgreSQL, Prisma |
+| Payments | Stripe |
+| Hosting | Vercel (web), Render (services + database) |
 
----
+## Run it locally
 
-## <a id="quick-start"></a>🚀 Quick Start
+**Prerequisites:** Node.js 18+, Python 3.9+, PostgreSQL (or Docker), a Gemini API key.
 
-### 1. Prerequisites
-- **Node.js** (v18+)
-- **Python** (3.9+)
-- **PostgreSQL** Database 
-- **Google Gemini API Key**
-
-### 2. Environment Setup
-To run the full stack, populate `.env` files in each respective directory based on their `.env.example`.
-- `DATABASE_URL`: PostgreSQL connection string (Org, Auth, Doc services).
-- `JWT_SECRET`: Secure encryption key for verifying tokens.
-- `GEMINI_API_KEY`: Required by the Python AI Service.
-
-### 3. Installation & Running
-
-**A. Backend Hub**
-Initialize databases and start the core Node.js services.
 ```bash
-cd services/
-npx prisma db push 
-npm run dev
-```
-
-**B. AI Processing Service**
-Boot the FastAPI Python service handling Gemini LLM requests.
-```bash
-cd services/ai-service
-pip install -r requirements.txt
-python src/main.py
-```
-
-**C. Web Client**
-Start the Next.js frontend application.
-```bash
-cd apps/web
+git clone https://github.com/likhith1253/Synergy_Space.git
+cd Synergy_Space
 npm install
-npm run dev
 ```
-Navigate to `http://localhost:3000` to preview.
 
----
+1. **Database.** Start Postgres (`docker compose up -d postgres` uses the included `docker-compose.yml`).
+2. **Environment.** In `packages/database`, each service in `services/*`, and `apps/web`, copy `.env.example` to `.env` (for `apps/web`, `.env.local`) and fill it in. Default ports: gateway 8000, auth 3001, document 3002, collab 3003, organization 3004, AI 8001. `apps/web` requires all five `NEXT_PUBLIC_*` URLs listed in its `.env.example` for a production build. The important keys are `DATABASE_URL`, `JWT_SECRET` (the same value in every service that verifies tokens), and `GEMINI_API_KEY` for the AI service. `.env` files are git-ignored.
+3. **Schema.**
+   ```bash
+   npm run db:push --workspace @collab/database
+   ```
+4. **Node services and web app.**
+   ```bash
+   npm run dev
+   ```
+5. **AI service** (separate terminal):
+   ```bash
+   cd services/ai-service
+   pip install -r requirements.txt
+   python -m src.main
+   ```
 
-## 📂 Repository Structure
+Then open http://localhost:3000. Set `MOCK_AI=true` in `services/ai-service/.env` to try the editor without a Gemini key.
 
-The codebase is organized as a monorepo containing distinct applications and services:
+## Repository layout
 
 ```text
-Realtime_Collaborator/
-├── apps/web/                  # Next.js Frontend
-│
-├── services/                  # Backend microservices
-│   ├── api-gateway/           # Central router proxy
-│   ├── auth-service/          # JWT Authentication
-│   ├── collab-service/        # Socket.io & Yjs sync
-│   ├── document-service/      # Metadata & Snapshots
-│   ├── organization-service/  # Tenant & Billing logic
-│   └── ai-service/            # Python FastAPI 
-│
-├── packages/                  # Shared libraries
-│   ├── database/              # Prisma Schema & migrations
-│   ├── logger/                # Global logging
-│   └── types/                 # Shared TS definitions
-│
-└── docs/                      # Engineering documentation
+apps/web/                 Next.js frontend
+services/
+  api-gateway/            routing / proxy
+  auth-service/           sign-up, login, JWT, password reset
+  collab-service/         Socket.IO + Yjs real-time sync
+  document-service/       documents, projects, slides, canvas, messages, invites
+  organization-service/   organizations and Stripe billing
+  ai-service/             FastAPI + Gemini
+packages/
+  database/               Prisma schema and migrations
+  logger/  types/         shared libraries
+docs/                     architecture, API, security, payment flow, setup
 ```
 
----
+## Status and roadmap
 
-## 🔮 Future Roadmap
+Known gaps, stated plainly:
 
-- **Stripe Frontend Integration:** The backend Stripe integration endpoints are already built into the `organization-service`. The next step is building the frontend UI Checkout session component to connect with these endpoints.
-- **Offline-First Editing:** Utilize IndexedDB to persist local Yjs vectors while offline, merging gracefully upon internet reconnection.
-- **Rich Text AI:** Advancing the AI service to construct heavily formatted blocks recursively (headings, lists, inline styling) natively bypassing plain text.
+- **No automated tests yet.** CI currently verifies that every package installs and builds and that the AI service compiles. Next up: auth-service tests, role/permission checks in the document service, and a two-client Yjs sync test.
+- **Offline editing** (persisting Yjs state in IndexedDB and merging on reconnect) is not implemented.
+- **Rich-text AI output** (headings, lists, inline styles) is not implemented; the AI service returns plain text.
+- **Observability:** no metrics or tracing beyond structured logs.
 
----
+## License
 
-## 🌍 Impact Statement
-
-*Realtime_Collaborator* pushes the boundary of modern SaaS architectures by blending cutting-edge AI utility with complex, conflict-free, peer-to-peer data syncing. This repository functions as a production-grade template demonstrating scalable state management and microservice architecture suitable for high-performance productivity tools.
+[MIT](LICENSE)

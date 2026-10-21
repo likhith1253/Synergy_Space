@@ -16,7 +16,7 @@ interface TourStep {
 
 const TOUR_STEPS: TourStep[] = [
   {
-    title: 'Welcome to Realtime Collaborator',
+    title: 'Welcome to SynergySpace',
     description: 'This dashboard is your workspace, the central hub for team collaboration. Let\'s take a quick tour of what you can do.',
     position: 'center'
   },

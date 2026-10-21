@@ -79,7 +79,7 @@ export function DemoModal() {
                 <div className="mx-auto w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center mb-2">
                   <Logo size={32} className="text-accent" />
                 </div>
-                <CardTitle className="text-2xl font-bold">Welcome to Realtime Collaborator</CardTitle>
+                <CardTitle className="text-2xl font-bold">Welcome to SynergySpace</CardTitle>
                 <CardDescription className="text-base">
                   Choose your experience:
                 </CardDescription>

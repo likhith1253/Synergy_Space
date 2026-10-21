@@ -1,6 +1,6 @@
 # AI Integration & Implementation
 
-The AI capabilities within the Realtime_Collaborator are separated into a discrete Python microservice (`ai-service`). This architectural separation natively supports python's mature data-science ecosystems, making future expansion into custom NLP pipelines simpler.
+The AI capabilities within the SynergySpace are separated into a discrete Python microservice (`ai-service`). This architectural separation natively supports python's mature data-science ecosystems, making future expansion into custom NLP pipelines simpler.
 
 ## Service Technology
 - **Language Framework:** Python / FastAPI
