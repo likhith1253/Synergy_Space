@@ -1,7 +1,7 @@
 # Application Features breakdown
 
 ## Real-Time Collaboration
-The platform leverages Yjs (a CRDT library) and WebSockets (via Socket.io) to ensure multiple users can collaboratively modify documents securely. Vector differentials representing keystrokes or styling updates are instantly broadcasted allowing for millisecond latent synchronization without conflict artifacts. Peer awareness engines trace active cursors and highlights for remote users.
+Multiple users can edit the same document, slide deck or canvas at once. Edits are relayed over Socket.io: a client sends its latest content to the collaboration service, which forwards it to the other members of that document's room. Updates are whole-content and last-writer-wins; there is no CRDT/OT merge, so two people typing at the same moment can overwrite each other. Presence (who is in the document / organization) is shown, but not live cursors. Joining a room and sending updates is authorized against project membership; viewers are read-only (see [security.md](security.md)).
 
 ## AI-Assisted Editing
 Through direct integration with Google's Gemini models, the editor features contextual generative capabilities out of the box. Users can request summaries, extensions, or code autocompletions. The AI service inherits the editor's live state block, formatting prompts that allow the Generative Model to respond comprehensively with situational awareness.

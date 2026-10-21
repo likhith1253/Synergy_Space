@@ -6,7 +6,8 @@
     "scripts": {
         "build": "tsc",
         "start": "node dist/index.js",
-        "dev": "ts-node-dev --respawn --transpile-only src/index.ts"
+        "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+        "test": "jest --runInBand"
     },
     "dependencies": {
         "@collab/database": "file:../../packages/database",

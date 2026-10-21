@@ -31,7 +31,7 @@ Given the persistent needs of WebSockets and the API Gateway routing mechanism, 
 
 4. **Collaboration Service (`collab-service`)**
    - Deployed as a web service.
-   - Critical configuration: Must NOT scale down to zero or use ephemeral instances that terminate frequently, as Yjs CRDT memory states require time to flush to PostgreSQL.
+   - Note: room membership and presence are held in memory, so a restart drops open sockets (clients reconnect and re-join). Content is persisted by the `document-service`, not by this service.
 
 5. **AI Service (`ai-service`)**
    - Deployed as a Python Web Service on Render or a comparable service (e.g., Railway, Heroku).

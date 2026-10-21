@@ -19,10 +19,10 @@ The SynergySpace platform is built on an API-Gateway-driven microservices archit
    - Serves as the tenant isolation layer. Manages Organizations, Team memberships, and underlying ties to user access levels. Contains Stripe abstractions and billing configurations.
 
 5. **Document Service (Node.js/Express)**
-   - Central authority over textual and metadata resources including Projects, Documents, Canvases, and Slides. Persists Yjs binary blobs as history snapshots preventing data loss from ephemeral memory in the collaboration service.
+   - Central authority over textual and metadata resources including Projects, Documents, Canvases, and Slides. Stores document content (in the `documents.yjs_binary_state` column, currently plain UTF-8 text despite the name) and version snapshots, and enforces project role checks on every route.
 
-6. **Collaboration Service (Node.js/Socket.io/Yjs)**
-   - A highly concurrent Node instance focused strictly on peer-to-peer CRDT updates and user presence (cursors/awareness). It communicates frequently with `document-service` to flush merged document changes into the database.
+6. **Collaboration Service (Node.js/Socket.io)**
+   - Authenticates each socket with the JWT, authorizes room joins against project membership in the database, and relays document/slide/canvas updates, presence and chat messages between the members of a room. It keeps no document state and does not write to the database; persistence happens through the `document-service` REST API.
 
 7. **AI Service (Python/FastAPI)**
    - Specialized environment for Natural Language Processing tasks leveraging the Google Generative AI (Gemini) SDK. Integrates directly into the editor context to synthesize real-time user prompts with contextual blocks of the document.
@@ -64,8 +64,8 @@ graph TD
 
 ## Real-Time Collaboration Flow
 
-1. **Initialization:** The user enters a document URL, the client fetches the latest Yjs binary blob from the `document-service` through the Gateway.
-2. **WebSocket Handshake:** A WebSocket connection is established with the `collab-service`.
-3. **Syncing Updates:** When a user types a character, a Yjs differential update vector is formed locally and transmitted via WebSockets to `collab-service`.
-4. **Broadcasting:** The `collab-service` broadcast this delta to all other subscribed clients in the room to process the CRDT merge. 
-5. **Persistence Trigger:** Periodic debounced processes trigger `collab-service` to commit the fully merged Yjs binary state back to the `document-service` to store in PostgreSQL.
+1. **Initialization:** The client fetches the latest saved content from the `document-service` through the Gateway.
+2. **WebSocket Handshake:** A Socket.io connection is opened to the `collab-service` with the access token. Connections without a valid token are rejected.
+3. **Join:** The client emits `join-document`; the service checks the caller's role on the owning project and either joins the room (read-only for viewers) or returns a `FORBIDDEN` error.
+4. **Broadcasting:** An editor's `document-update` carries the full new content; the service forwards it to the other sockets in the room. Updates from viewers, or from sockets that have not joined the room, are dropped. Concurrent edits are last-writer-wins (no CRDT merge).
+5. **Persistence:** The client saves content through the `document-service` REST API (`PUT /documents/:id`), which requires write access.

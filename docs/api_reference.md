@@ -73,7 +73,7 @@ Creates a new logical workspace/project within an Organization.
   - `organization_id` (uuid)
 
 ### `GET /documents/:id`
-Fetches document metadata by UUID. Note: Document content is not actively returned in this payload (Yjs bin blob fetched via WebSocket sync).
+Fetches a document (title, saved `content` text, project id, timestamps) by UUID. Requires read access to the document's project; otherwise `404`.
 - **Required Parameters**
   - `id` (uuid path parameter)
 - **Sample Response** (200 OK)
