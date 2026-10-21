@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, "overhaul/**"]
   pull_request:
 
 jobs:
@@ -26,7 +26,7 @@ jobs:
       - run: npm run build
       - name: Test (auth, document, collab, organization services)
         run: npm test
-      - name: Lint web app (advisory: existing lint errors are tracked, not yet fixed)
+      - name: "Lint web app (advisory, existing lint errors are tracked)"
         run: npm run lint
         continue-on-error: true
 
