@@ -149,7 +149,7 @@ const CanvasBoard: React.FC<CanvasBoardProps> = ({
             onMousemove={handleMouseMove}
             onMouseup={handleMouseUp}
             ref={stageRef}
-            className="bg-gray-50 bg-grid-slate-200" // Tailwind grid pattern can be added via CSS
+            className="bg-background bg-grid" // Tailwind grid pattern can be added via CSS
         >
             <Layer>
                 {items.map((item, i) => {

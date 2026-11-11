@@ -20,7 +20,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Logo } from '@/components/logo'
 
 import { getProjects, Project } from '@/lib/projects'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/auth-context'
 import { ApiClient } from '@/lib/api-client'
 import { joinOrganization, onUserOnline, onUserOffline, onJoinedOrganization } from '@/lib/socket'
@@ -48,6 +48,7 @@ interface Document {
 
 export function Sidebar() {
   const router = useRouter()
+  const pathname = usePathname()
   const { user, logout } = useAuth()
   const [activeOrg, setActiveOrg] = React.useState('')
   const [showOrgMenu, setShowOrgMenu] = React.useState(false)
@@ -146,8 +147,8 @@ export function Sidebar() {
   }, [])
 
   const organizations = user?.organization
-    ? [{ id: 1, name: user.organization.name, color: 'bg-purple-500' }]
-    : [{ id: 1, name: activeOrg || 'Organization', color: 'bg-purple-500' }]
+    ? [{ id: 1, name: user.organization.name, color: 'bg-primary' }]
+    : [{ id: 1, name: activeOrg || 'Organization', color: 'bg-primary' }]
 
   const teamMembers = React.useMemo(() => {
     return members.map((m) => ({
@@ -162,16 +163,20 @@ export function Sidebar() {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <div className="p-6 border-b border-sidebar-border space-y-4">
+      <div className="px-4 pt-5 pb-4 space-y-4">
+        <Link href="/dashboard" className="flex items-center gap-2 px-2 text-sidebar-foreground">
+          <Logo size={20} />
+          <span className="text-[15px] font-semibold tracking-tight">SynergySpace</span>
+        </Link>
         {/* Organization Switcher */}
         <div className="relative">
           <button
             onClick={() => setShowOrgMenu(!showOrgMenu)}
-            className="w-full flex items-center justify-between p-3 rounded-lg bg-sidebar-accent hover:bg-sidebar-accent/80 transition-colors"
+            className="w-full flex items-center justify-between rounded-xl border border-sidebar-border bg-card p-2.5 transition-colors hover:bg-sidebar-accent"
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">
-                <Logo size={20} className="text-white" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary font-mono text-xs font-semibold text-primary-foreground">
+                {(activeOrg || 'O').slice(0, 1).toUpperCase()}
               </div>
               <div className="text-left">
                 <p className="text-sm font-semibold text-sidebar-foreground">
@@ -213,10 +218,10 @@ export function Sidebar() {
       </div>
 
       {/* Main Navigation */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6">
+      <div className="flex-1 overflow-y-auto px-3 py-2 space-y-7">
         {/* Quick Access */}
         <div className="space-y-2">
-          <p className="text-xs font-semibold text-sidebar-foreground/60 uppercase tracking-wider px-3">
+          <p className="text-eyebrow px-3">
             Quick Access
           </p>
           <nav className="space-y-1">
@@ -231,11 +236,11 @@ export function Sidebar() {
               const Icon = item.icon
               return (
                 <Link key={item.href} href={item.href}>
-                  <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sidebar-foreground hover:bg-sidebar-accent transition-colors group">
-                    <Icon className="w-5 h-5 text-sidebar-foreground/70 group-hover:text-sidebar-foreground" />
+                  <button className={`group flex w-full items-center gap-3 rounded-lg px-3 py-2 transition-colors ${pathname === item.href ? 'bg-card text-sidebar-foreground shadow-soft' : 'text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-foreground'}`}>
+                    <Icon className="h-4 w-4 opacity-80 group-hover:opacity-100" />
                     <span className="text-sm font-medium flex-1 text-left">{item.label}</span>
                     {item.badge !== undefined && item.badge !== null && (
-                      <span className="bg-primary/10 text-primary text-xs font-medium px-2 py-0.5 rounded-full">
+                      <span className="font-mono text-[11px] text-muted-foreground">
                         {item.badge}
                       </span>
                     )}
@@ -248,19 +253,19 @@ export function Sidebar() {
 
         {/* Projects */}
         <div className="space-y-2">
-          <p className="text-xs font-semibold text-sidebar-foreground/60 uppercase tracking-wider px-3">
+          <p className="text-eyebrow px-3">
             Projects
           </p>
           <div className="space-y-1">
             {projects.map((project) => (
               <motion.button
                 key={project.id}
-                whileHover={{ x: 4 }}
+                whileHover={{ x: 2 }}
                 onClick={() => router.push(`/projects/${project.id}`)}
                 className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sidebar-foreground hover:bg-sidebar-accent transition-colors group"
               >
                 <div className="flex items-center gap-3 flex-1">
-                  <span className="text-lg">📁</span>
+                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-sidebar-foreground/40 group-hover:bg-accent" />
                   <span className="text-sm font-medium truncate">
                     {project.name}
                   </span>
@@ -280,7 +285,7 @@ export function Sidebar() {
 
         {/* Team */}
         <div className="space-y-2">
-          <p className="text-xs font-semibold text-sidebar-foreground/60 uppercase tracking-wider px-3">
+          <p className="text-eyebrow px-3">
             Team Online
           </p>
           <div className="space-y-2">
@@ -291,8 +296,8 @@ export function Sidebar() {
               >
                 <div className="flex items-center gap-3">
                   <div className="relative">
-                    <Avatar className="w-8 h-8">
-                      <AvatarFallback className="bg-indigo-500 text-white text-xs font-semibold">
+                    <Avatar className="w-7 h-7">
+                      <AvatarFallback className="bg-secondary text-foreground text-[10px] font-semibold">
                         {member.avatar}
                       </AvatarFallback>
                     </Avatar>
@@ -300,7 +305,7 @@ export function Sidebar() {
                       <motion.div
                         animate={{ scale: [1, 1.2, 1] }}
                         transition={{ duration: 2, repeat: Infinity }}
-                        className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border border-sidebar"
+                        className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-success rounded-full border border-sidebar"
                       />
                     )}
                   </div>
@@ -309,7 +314,7 @@ export function Sidebar() {
                   </span>
                 </div>
                 {member.online && (
-                  <div className="w-2 h-2 bg-green-500 rounded-full" />
+                  <div className="w-2 h-2 bg-success rounded-full" />
                 )}
               </div>
             ))}
@@ -318,11 +323,11 @@ export function Sidebar() {
       </div>
 
       {/* Footer */}
-      <div className="p-4 border-t border-sidebar-border space-y-2">
+      <div className="p-3 border-t border-sidebar-border space-y-0.5">
         <Link href="/dashboard/settings">
           <Button
             variant="ghost"
-            className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent"
+            className="h-9 w-full justify-start text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-foreground"
           >
             <Settings className="w-4 h-4 mr-2" />
             Settings
@@ -330,7 +335,7 @@ export function Sidebar() {
         </Link>
         <Button
           variant="ghost"
-          className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent"
+          className="h-9 w-full justify-start text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-foreground"
           onClick={() => setShowHelpModal(true)}
         >
           <HelpCircle className="w-4 h-4 mr-2" />
@@ -339,7 +344,7 @@ export function Sidebar() {
         <HelpModal open={showHelpModal} onOpenChange={setShowHelpModal} />
         <Button
           variant="ghost"
-          className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent"
+          className="h-9 w-full justify-start text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-foreground"
           onClick={async () => {
             try {
               await logout()

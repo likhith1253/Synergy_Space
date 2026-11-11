@@ -57,8 +57,8 @@ export default function DashboardPresentationsPage() {
                 {/* Header */}
                 <div className="mb-10">
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                            <Presentation className="w-5 h-5 text-blue-500" />
+                        <div className="w-10 h-10 rounded-xl bg-accent-soft flex items-center justify-center">
+                            <Presentation className="w-5 h-5 text-accent" />
                         </div>
                         <div>
                             <h1 className="text-3xl font-bold tracking-tight">Presentations</h1>
@@ -72,9 +72,9 @@ export default function DashboardPresentationsPage() {
                 {/* Feature highlights strip */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10">
                     {[
-                        { icon: <LayoutTemplate className="w-5 h-5 text-blue-500" />, label: 'Templates', desc: 'Classic, Two-column, Quote…' },
-                        { icon: <Palette className="w-5 h-5 text-blue-500" />, label: 'Backgrounds', desc: 'Colours per slide' },
-                        { icon: <Monitor className="w-5 h-5 text-blue-500" />, label: 'Slide editor', desc: 'Full WYSIWYG 16:9' },
+                        { icon: <LayoutTemplate className="w-5 h-5 text-accent" />, label: 'Templates', desc: 'Classic, Two-column, Quote…' },
+                        { icon: <Palette className="w-5 h-5 text-accent" />, label: 'Backgrounds', desc: 'Colours per slide' },
+                        { icon: <Monitor className="w-5 h-5 text-accent" />, label: 'Slide editor', desc: 'Full WYSIWYG 16:9' },
                         { icon: <span className="text-xl">⚡</span>, label: 'Live sync', desc: 'Real-time collaboration' },
                     ].map((f) => (
                         <div key={f.label} className="border rounded-xl p-4 bg-card flex flex-col gap-1">
@@ -158,12 +158,12 @@ export default function DashboardPresentationsPage() {
                                 className="group block border rounded-xl p-5 bg-card hover:border-blue-400/60 hover:shadow-md transition-all"
                             >
                                 <div className="flex items-start justify-between mb-3">
-                                    <div className="w-9 h-9 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
-                                        <Presentation className="w-4 h-4 text-blue-500" />
+                                    <div className="w-9 h-9 rounded-lg bg-accent-soft flex items-center justify-center group-hover:bg-accent-soft transition-colors">
+                                        <Presentation className="w-4 h-4 text-accent" />
                                     </div>
                                     <ArrowRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity mt-1" />
                                 </div>
-                                <h3 className="font-semibold text-base mb-1 truncate group-hover:text-blue-500 transition-colors">
+                                <h3 className="font-semibold text-base mb-1 truncate group-hover:text-accent transition-colors">
                                     {project.name}
                                 </h3>
                                 {project.description && (

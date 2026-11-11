@@ -1,22 +1,22 @@
-
-import Navigation from '@/components/navigation'
-import HeroSection from '@/components/hero-section'
-import FeaturesSection from '@/components/features-section'
-import CollaborationSection from '@/components/collaboration-section'
-import DocsSection from '@/components/docs-section'
-import Footer from '@/components/footer'
+import { SiteNav } from '@/components/landing/site-nav'
+import { Hero } from '@/components/landing/hero'
+import { Architecture } from '@/components/landing/architecture'
+import { AISection, BillingStrip, FinalCTA, Product, SiteFooter, StackMarquee } from '@/components/landing/sections'
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navigation />
-      <main className="flex-grow">
-        <HeroSection />
-        <FeaturesSection />
-        <CollaborationSection />
-        <DocsSection />
+    <div className="min-h-screen overflow-x-hidden">
+      <SiteNav />
+      <main>
+        <Hero />
+        <StackMarquee />
+        <Product />
+        <Architecture />
+        <AISection />
+        <BillingStrip />
+        <FinalCTA />
       </main>
-      <Footer />
+      <SiteFooter />
     </div>
   )
 }

@@ -10,7 +10,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useAuth } from '@/lib/auth-context'
-import { Logo } from '@/components/logo'
 
 export default function SignInPage() {
   const router = useRouter()
@@ -71,7 +70,7 @@ export default function SignInPage() {
       transition={{ duration: 0.4 }}
       className="w-full max-w-md"
     >
-      <Card className="border-border/50">
+      <Card className="border-0 bg-transparent shadow-none">
         <CardHeader className="space-y-2">
           <motion.div
             initial={{ opacity: 0 }}
@@ -79,14 +78,12 @@ export default function SignInPage() {
             transition={{ delay: 0.2 }}
           >
             <div className="flex items-center justify-center mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-accent to-accent/80 rounded-lg flex items-center justify-center">
-                <Logo size={28} className="text-accent-foreground" />
-              </div>
+              
             </div>
           </motion.div>
-          <CardTitle className="text-3xl font-bold text-center">Sign In</CardTitle>
-          <CardDescription className="text-center text-base">
-            Welcome back to Collab
+          <CardTitle className="font-serif text-5xl font-normal tracking-tight">Sign In</CardTitle>
+          <CardDescription className="text-base">
+            Welcome back. Pick up where your team left off.
           </CardDescription>
         </CardHeader>
 
@@ -96,7 +93,7 @@ export default function SignInPage() {
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="mb-5 p-4 rounded-lg bg-accent/10 border border-accent/25 flex flex-col gap-3"
+            className="mb-5 p-4 rounded-lg bg-accent-soft border border-transparent flex flex-col gap-3"
           >
             <div>
               <p className="text-sm font-semibold text-accent">Want to try the platform first?</p>
@@ -105,7 +102,7 @@ export default function SignInPage() {
               type="button"
               onClick={handleDemoLogin}
               disabled={isLoading}
-              className="w-full h-10 bg-accent text-accent-foreground hover:bg-accent/90 flex items-center justify-center gap-2 font-semibold"
+              className="w-full h-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 flex items-center justify-center gap-2 font-semibold"
             >
               <Compass className="w-4 h-4" />
               {demoLoading ? 'Preparing Demo Workspace...' : 'Launch Demo Workspace'}
@@ -137,7 +134,7 @@ export default function SignInPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isLoading}
-                className="h-11 bg-secondary border-border/50 text-base"
+                className="h-11 bg-card text-base"
               />
             </div>
 
@@ -163,7 +160,7 @@ export default function SignInPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}
-                className="h-11 bg-secondary border-border/50 text-base"
+                className="h-11 bg-card text-base"
               />
             </div>
 
@@ -171,7 +168,7 @@ export default function SignInPage() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full h-11 bg-accent text-accent-foreground hover:bg-accent/90 text-base font-semibold mt-6"
+              className="w-full h-11 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 text-base font-semibold mt-6"
             >
               {loading ? 'Signing in...' : 'Sign In'}
               {!loading && <ArrowRight className="ml-2 h-4 w-4" />}
@@ -184,7 +181,7 @@ export default function SignInPage() {
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-background px-2 text-muted-foreground">
-                  New to Collab?
+                  New here?
                 </span>
               </div>
             </div>
@@ -193,7 +190,7 @@ export default function SignInPage() {
             <Button
               type="button"
               variant="outline"
-              className="w-full h-11 border-border/50 text-foreground hover:bg-secondary text-base font-semibold bg-transparent"
+              className="w-full h-11 rounded-full border-border text-foreground hover:bg-secondary text-base font-medium bg-card"
               asChild
             >
               <Link href="/auth/sign-up">Create Account</Link>

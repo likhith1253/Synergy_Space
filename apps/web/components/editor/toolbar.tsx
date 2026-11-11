@@ -83,13 +83,13 @@ export function EditorToolbar({
       case 'saving':
         return <Cloud className="w-4 h-4 animate-pulse" />
       case 'saved':
-        return <Check className="w-4 h-4 text-green-500" />
+        return <Check className="w-4 h-4 text-success" />
       case 'unsaved':
         return <AlertCircle className="w-4 h-4 text-yellow-500" />
       case 'error':
-        return <AlertCircle className="w-4 h-4 text-red-500" />
+        return <AlertCircle className="w-4 h-4 text-destructive" />
       default:
-        return <Check className="w-4 h-4 text-green-500" />
+        return <Check className="w-4 h-4 text-success" />
     }
   }
 
@@ -139,7 +139,7 @@ export function EditorToolbar({
                             key={user.userId}
                             className={`flex items-center gap-2 text-sm p-2 rounded hover:bg-muted ${isMe ? 'border border-blue-500 bg-blue-50/10' : ''}`}
                           >
-                            <div className="w-2 h-2 rounded-full bg-green-500" />
+                            <div className="w-2 h-2 rounded-full bg-success" />
                             <div className="flex flex-col overflow-hidden">
                               <span className="font-medium truncate">{user.name} {isMe && '(You)'}</span>
                               <span className="text-xs text-muted-foreground truncate">{user.email}</span>

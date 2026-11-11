@@ -15,7 +15,7 @@ export default function BillingSuccessPage() {
                 className="max-w-md w-full text-center space-y-6 bg-card p-8 rounded-xl border shadow-lg"
             >
                 <div className="flex justify-center">
-                    <CheckCircle className="w-16 h-16 text-green-500" />
+                    <CheckCircle className="w-16 h-16 text-success" />
                 </div>
 
                 <div className="space-y-2">

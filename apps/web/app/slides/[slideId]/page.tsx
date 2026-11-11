@@ -371,8 +371,8 @@ export default function SlideEditorPage() {
 
                     <div className="w-px h-4 bg-border mx-1 hidden sm:block"></div>
 
-                    <div className="px-3 py-1 bg-green-500/10 text-green-600 text-xs rounded-full font-medium hidden md:flex items-center">
-                        <div className="w-1.5 h-1.5 rounded-full bg-green-500 mr-2 animate-pulse"></div>
+                    <div className="px-3 py-1 bg-success/10 text-success text-xs rounded-full font-medium hidden md:flex items-center">
+                        <div className="w-1.5 h-1.5 rounded-full bg-success mr-2 animate-pulse"></div>
                         Live Sync
                     </div>
                 </div>

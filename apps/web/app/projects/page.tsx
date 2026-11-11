@@ -46,7 +46,7 @@ export default function ProjectsPage() {
     }, []);
 
     if (loading) return <div className="p-8">Loading projects...</div>;
-    if (error) return <div className="p-8 text-red-500">{error}</div>;
+    if (error) return <div className="p-8 text-destructive">{error}</div>;
 
     return (
         <div className="flex flex-col h-full p-8 md:p-12 max-w-7xl mx-auto w-full">

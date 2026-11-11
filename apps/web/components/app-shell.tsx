@@ -19,7 +19,7 @@ export function AppShell({ children }: AppShellProps) {
         initial={{ x: -300 }}
         animate={{ x: 0 }}
         transition={{ duration: 0.3, ease: 'easeOut' }}
-        className="hidden md:block w-64 bg-sidebar border-r border-sidebar-border"
+        className="hidden md:block w-64 shrink-0 bg-sidebar border-r border-sidebar-border"
       >
         <Sidebar />
       </motion.div>
@@ -27,7 +27,7 @@ export function AppShell({ children }: AppShellProps) {
       {/* Main Content */}
       <div className="flex flex-col flex-1 min-h-0">
         {/* Topbar */}
-        <div className="border-b border-border bg-background sticky top-0 z-50 overflow-visible">
+        <div className="sticky top-0 z-50 overflow-visible border-b border-border bg-background/80 backdrop-blur-xl">
           <Topbar />
         </div>
 

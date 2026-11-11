@@ -43,7 +43,7 @@ export default function DocumentsPage() {
           lastEditor: 'Unknown',
           collaborators: [],
           status: 'Active',
-          color: 'from-blue-500 to-cyan-500' // Default color
+          color: 'from-foreground to-foreground/80' // Default color
         })))
       } catch (err) {
         console.error(err)
@@ -118,7 +118,7 @@ export default function DocumentsPage() {
             <Filter className="w-4 h-4" />
           </Button>
           <Button
-            className="bg-accent text-accent-foreground hover:bg-accent/90"
+            className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
             onClick={() => {
               alert('To create a document, go to a project first.')
               router.push('/projects')
@@ -199,7 +199,7 @@ export default function DocumentsPage() {
                       <div className="flex items-center gap-1">
                         {doc.collaborators.slice(0, 3).map((avatar: any) => (
                           <Avatar key={avatar} className="w-6 h-6">
-                            <AvatarFallback className="bg-indigo-500 text-white text-xs font-semibold">
+                            <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">
                               {avatar}
                             </AvatarFallback>
                           </Avatar>
@@ -250,7 +250,7 @@ export default function DocumentsPage() {
                   <div className="hidden md:flex items-center gap-2">
                     {doc.collaborators.slice(0, 3).map((avatar: any) => (
                       <Avatar key={avatar} className="w-6 h-6">
-                        <AvatarFallback className="bg-indigo-500 text-white text-xs font-semibold">
+                        <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">
                           {avatar}
                         </AvatarFallback>
                       </Avatar>

@@ -49,8 +49,8 @@ export default function DashboardCanvasPage() {
                 {/* Header */}
                 <div className="mb-10">
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
-                            <Palette className="w-5 h-5 text-purple-500" />
+                        <div className="w-10 h-10 rounded-xl bg-accent-soft flex items-center justify-center">
+                            <Palette className="w-5 h-5 text-accent" />
                         </div>
                         <div>
                             <h1 className="text-3xl font-bold tracking-tight">Canvas</h1>
@@ -117,12 +117,12 @@ export default function DashboardCanvasPage() {
                                 className="group block border rounded-xl p-5 bg-card hover:border-purple-400/60 hover:shadow-md transition-all"
                             >
                                 <div className="flex items-start justify-between mb-3">
-                                    <div className="w-9 h-9 rounded-lg bg-purple-500/10 flex items-center justify-center group-hover:bg-purple-500/20 transition-colors">
-                                        <Palette className="w-4 h-4 text-purple-500" />
+                                    <div className="w-9 h-9 rounded-lg bg-accent-soft flex items-center justify-center group-hover:bg-accent-soft transition-colors">
+                                        <Palette className="w-4 h-4 text-accent" />
                                     </div>
                                     <ArrowRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity mt-1" />
                                 </div>
-                                <h3 className="font-semibold text-base mb-1 truncate group-hover:text-purple-500 transition-colors">
+                                <h3 className="font-semibold text-base mb-1 truncate group-hover:text-accent transition-colors">
                                     {project.name}
                                 </h3>
                                 {project.description && (

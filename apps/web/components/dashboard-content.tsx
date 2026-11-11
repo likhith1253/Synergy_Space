@@ -104,7 +104,7 @@ export function DashboardContent() {
   }
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="mx-auto max-w-6xl space-y-10 px-6 py-10 sm:px-10">
       {/* Header */}
       <div className="flex items-center justify-between">
         <motion.div
@@ -112,15 +112,16 @@ export function DashboardContent() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          <h1 className="text-4xl font-bold mb-2">Dashboard</h1>
-          <p className="text-muted-foreground">
-            Manage your projects and documents.
+          <p className="text-eyebrow mb-3">Workspace</p>
+          <h1 className="font-serif text-5xl leading-none tracking-tight">Good to see you.</h1>
+          <p className="mt-3 text-muted-foreground">
+            Pick up a project, or start something new.
           </p>
         </motion.div>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2">
+            <Button className="gap-2 rounded-full px-5">
               <Plus className="w-4 h-4" />
               New Project
             </Button>
@@ -161,7 +162,7 @@ export function DashboardContent() {
       {/* Projects Grid */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-semibold">Your Projects</h2>
+          <h2 className="text-eyebrow">Your projects · {projects.length}</h2>
           <Button variant="ghost" size="sm" onClick={fetchProjects} disabled={isLoading}>
             Refresh
           </Button>
@@ -172,12 +173,12 @@ export function DashboardContent() {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         ) : error ? (
-          <div className="text-center py-12 text-red-500">
+          <div className="text-center py-12 text-destructive">
             <p>{error}</p>
             <Button variant="link" onClick={fetchProjects}>Try Again</Button>
           </div>
         ) : projects.length === 0 ? (
-          <div className="text-center py-16 border rounded-lg bg-card/50 border-dashed">
+          <div className="rounded-2xl border border-dashed border-border bg-card py-20 text-center">
             <Folder className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-medium mb-2">No projects yet</h3>
             <p className="text-muted-foreground mb-4">Create your first project to get started</p>
@@ -188,7 +189,7 @@ export function DashboardContent() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"
           >
             {projects.map((project) => (
               <motion.div
@@ -198,20 +199,20 @@ export function DashboardContent() {
                 className="group"
               >
                 <Link href={`/projects/${project.id}/documents`}>
-                  <Card className="h-full hover:border-accent/50 transition-colors cursor-pointer">
+                  <Card className="h-full cursor-pointer rounded-2xl shadow-none transition-all duration-300 hover:shadow-lift">
                     <CardHeader className="flex flex-row items-start justify-between pb-2">
                       <div className="space-y-1">
-                        <CardTitle className="text-xl group-hover:text-accent transition-colors">
+                        <CardTitle className="text-lg font-medium tracking-tight">
                           {project.name}
                         </CardTitle>
                         <CardDescription className="line-clamp-2">
                           {project.description || 'No description'}
                         </CardDescription>
                       </div>
-                      <Folder className="w-5 h-5 text-muted-foreground group-hover:text-accent transition-colors" />
+                      <ArrowRight className="h-4 w-4 -translate-x-1 text-muted-foreground opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
                     </CardHeader>
                     <CardContent>
-                      <div className="flex items-center text-sm text-muted-foreground gap-4 mt-4">
+                      <div className="mt-4 flex items-center gap-4 font-mono text-xs text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
                           <span>{new Date(project.updated_at).toLocaleDateString()}</span>

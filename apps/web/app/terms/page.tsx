@@ -29,7 +29,7 @@ export default function TermsPage() {
                         <section className="space-y-4">
                             <h2 className="text-2xl font-semibold">1. Acceptance of Terms</h2>
                             <p className="text-muted-foreground">
-                                By accessing and using Collab, you agree to these Terms of Service and our Privacy Policy. 
+                                By accessing and using SynergySpace, you agree to these Terms of Service and our Privacy Policy. 
                                 If you do not agree to these terms, please do not use our collaboration platform.
                             </p>
                         </section>
@@ -37,7 +37,7 @@ export default function TermsPage() {
                         <section className="space-y-4">
                             <h2 className="text-2xl font-semibold">2. Service Description</h2>
                             <p className="text-muted-foreground">
-                                Collab provides a real-time collaboration platform for document editing, project management, 
+                                SynergySpace provides a real-time collaboration platform for document editing, project management, 
                                 and team communication. You are granted a limited, non-exclusive license to use the service 
                                 in accordance with these terms and your selected subscription plan.
                             </p>
@@ -55,7 +55,7 @@ export default function TermsPage() {
                         <section className="space-y-4">
                             <h2 className="text-2xl font-semibold">4. Content and Data</h2>
                             <p className="text-muted-foreground">
-                                You retain ownership of all content you create or upload to Collab. We provide tools for 
+                                You retain ownership of all content you create or upload to SynergySpace. We provide tools for 
                                 real-time collaboration and document management, but you are responsible for ensuring 
                                 your content complies with applicable laws and regulations.
                             </p>

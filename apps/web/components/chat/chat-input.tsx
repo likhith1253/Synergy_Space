@@ -26,14 +26,14 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
     };
 
     return (
-        <div className="p-3 border-t border-zinc-700 bg-zinc-900/50 backdrop-blur-sm">
+        <div className="p-3 border-t border-border bg-card">
             <div className="flex gap-2">
                 <Input
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     onKeyDown={handleKeyDown}
                     placeholder="Type a message..."
-                    className="flex-1 bg-zinc-800 border-zinc-700 focus-visible:ring-indigo-500 text-zinc-100 placeholder:text-zinc-500"
+                    className="flex-1 bg-background border-border focus-visible:ring-accent text-foreground placeholder:text-muted-foreground"
                     disabled={disabled}
                     autoComplete="off"
                 />
@@ -41,7 +41,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
                     size="icon"
                     onClick={handleSend}
                     disabled={disabled || !message.trim()}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white transition-colors"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground transition-colors"
                 >
                     <Send className="w-4 h-4" />
                 </Button>

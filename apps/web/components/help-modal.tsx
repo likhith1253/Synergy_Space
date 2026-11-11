@@ -86,7 +86,7 @@ export function HelpModal({ open, onOpenChange }: HelpModalProps) {
                         {/* How to create a project */}
                         <section>
                             <div className="flex items-center gap-2 mb-2">
-                                <FolderPlus className="w-5 h-5 text-blue-500" />
+                                <FolderPlus className="w-5 h-5 text-accent" />
                                 <h3 className="text-lg font-semibold text-foreground">
                                     How to Create a Project
                                 </h3>
@@ -102,7 +102,7 @@ export function HelpModal({ open, onOpenChange }: HelpModalProps) {
                         {/* How to create a document */}
                         <section>
                             <div className="flex items-center gap-2 mb-2">
-                                <FileText className="w-5 h-5 text-green-500" />
+                                <FileText className="w-5 h-5 text-success" />
                                 <h3 className="text-lg font-semibold text-foreground">
                                     How to Create a Document
                                 </h3>
@@ -119,7 +119,7 @@ export function HelpModal({ open, onOpenChange }: HelpModalProps) {
                         {/* How to invite team members */}
                         <section>
                             <div className="flex items-center gap-2 mb-2">
-                                <UserPlus className="w-5 h-5 text-purple-500" />
+                                <UserPlus className="w-5 h-5 text-accent" />
                                 <h3 className="text-lg font-semibold text-foreground">
                                     How to Invite Team Members
                                 </h3>
@@ -154,7 +154,7 @@ export function HelpModal({ open, onOpenChange }: HelpModalProps) {
                         {/* How to use Canvas */}
                         <section>
                             <div className="flex items-center gap-2 mb-2">
-                                <Palette className="w-5 h-5 text-pink-500" />
+                                <Palette className="w-5 h-5 text-accent" />
                                 <h3 className="text-lg font-semibold text-foreground">
                                     How to Use Canvas
                                 </h3>

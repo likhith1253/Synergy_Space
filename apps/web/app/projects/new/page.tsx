@@ -102,7 +102,7 @@ export default function NewProjectPage() {
               </div>
 
               {error && (
-                <div className="text-sm text-red-500 bg-red-50 p-3 rounded-md">
+                <div className="text-sm text-destructive bg-red-50 p-3 rounded-md">
                   {error}
                 </div>
               )}

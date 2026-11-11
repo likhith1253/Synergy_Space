@@ -15,7 +15,7 @@ import Link from 'next/link';
 // Load CanvasBoard dynamically to avoid SSR issues with Konva
 const CanvasBoard = dynamic(() => import('./CanvasBoard'), {
     ssr: false,
-    loading: () => <div className="flex items-center justify-center h-full bg-gray-50 text-gray-400">Loading Canvas...</div>
+    loading: () => <div className="flex items-center justify-center h-full bg-background text-muted-foreground">Loading Canvas...</div>
 });
 
 interface CanvasEditorProps {
@@ -254,11 +254,11 @@ const CanvasEditor = ({ canvasId, projectId, onBack }: CanvasEditorProps) => {
     };
 
     if (isLoading) {
-        return <div className="flex items-center justify-center h-full bg-gray-50 text-gray-400">Loading...</div>;
+        return <div className="flex items-center justify-center h-full bg-background text-muted-foreground">Loading...</div>;
     }
 
     return (
-        <div className="relative w-full h-full bg-gray-50 overflow-hidden">
+        <div className="relative w-full h-full bg-background overflow-hidden">
             {/* Top Navigation Bar */}
             <div className="absolute top-4 left-4 right-4 z-50 flex items-center gap-2">
                 <div className="flex items-center gap-2">

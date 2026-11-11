@@ -71,7 +71,7 @@ function ResetPasswordForm() {
 
   if (!isValidToken) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-4">
+      <div className="flex items-center justify-center">
         <div className="w-full max-w-md">
           <Link href="/auth/forgot-password">
             <Button variant="ghost" className="mb-4">
@@ -96,7 +96,7 @@ function ResetPasswordForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-4">
+    <div className="flex items-center justify-center">
       <div className="w-full max-w-md">
         <Link href="/auth/sign-in">
           <Button variant="ghost" className="mb-4">
@@ -116,7 +116,7 @@ function ResetPasswordForm() {
             {success ? (
               <div className="space-y-4">
                 <div className="flex flex-col items-center justify-center py-8">
-                  <CheckCircle className="w-16 h-16 text-green-500 mb-4" />
+                  <CheckCircle className="w-16 h-16 text-success mb-4" />
                   <p className="text-center text-sm text-muted-foreground">
                     Password has been reset successfully. You can now log in with your new password.
                   </p>

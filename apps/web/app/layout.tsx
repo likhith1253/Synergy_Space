@@ -1,19 +1,24 @@
 import React from "react"
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Geist, Geist_Mono, Instrument_Serif } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import { AuthProvider } from '@/lib/auth-context'
 import { DemoModal } from '@/components/demo-modal'
 import { ProductTour } from '@/components/product-tour'
 
-const _geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
-const _geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
+const geist = Geist({ subsets: ['latin'], variable: '--font-geist' })
+const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono' })
+const display = Instrument_Serif({
+  subsets: ['latin'],
+  weight: '400',
+  style: ['normal', 'italic'],
+  variable: '--font-display',
+})
 
 export const metadata: Metadata = {
-  title: 'Collab - Real-time Collaborative Platform',
-  description: 'Build together seamlessly with organizations, projects, documents, and AI-powered collaboration tools',
-  generator: 'v0.app',
+  title: 'SynergySpace — real-time collaboration, built on microservices',
+  description: 'Co-edit documents, slides and canvases in real time, with AI assistance and team workspaces. Six services behind one gateway.',
   icons: {
     icon: [
       {
@@ -43,8 +48,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
-      <body className={`${_geist.variable} ${_geistMono.variable} font-sans antialiased bg-background text-foreground`}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${geist.variable} ${geistMono.variable} ${display.variable} font-sans antialiased bg-background text-foreground`}>
         <AuthProvider>
           {children}
           <DemoModal />

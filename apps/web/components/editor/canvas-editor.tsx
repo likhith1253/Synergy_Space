@@ -397,7 +397,7 @@ export function CanvasEditor({
 
           <button
             onClick={deleteSelected}
-            className="p-2 rounded transition-colors hover:bg-muted text-red-500"
+            className="p-2 rounded transition-colors hover:bg-muted text-destructive"
             title="Delete Selected"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -415,7 +415,7 @@ export function CanvasEditor({
             </span>
           )}
           {saveError && (
-            <span className="text-sm text-red-500">
+            <span className="text-sm text-destructive">
               {saveError}
             </span>
           )}

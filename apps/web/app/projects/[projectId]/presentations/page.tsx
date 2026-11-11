@@ -144,7 +144,7 @@ export default function ProjectPresentationsPage() {
                             <Button onClick={handleCreatePresentation} disabled={creating} className="shrink-0">
                             {creating ? (
                                 <>
-                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
                                     Creating...
                                 </>
                             ) : (

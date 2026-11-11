@@ -50,7 +50,7 @@ export default function DocumentPage() {
     return (
       <div className="flex h-full w-full items-center justify-center">
         <div className="text-center">
-          <h2 className="text-xl font-semibold mb-2 text-red-500">Error</h2>
+          <h2 className="text-xl font-semibold mb-2 text-destructive">Error</h2>
           <p className="text-muted-foreground">{error}</p>
         </div>
       </div>

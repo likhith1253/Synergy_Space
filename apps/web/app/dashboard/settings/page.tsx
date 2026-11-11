@@ -80,7 +80,7 @@ export default function SettingsPage() {
           </CardFooter>
         </Card>
 
-        <Card className="border-red-500/20 bg-red-500/5">
+        <Card className="border-destructive/20 bg-destructive/5">
           <CardHeader>
             <CardTitle className="text-red-600 dark:text-red-400">Danger Zone</CardTitle>
             <CardDescription>
@@ -92,7 +92,7 @@ export default function SettingsPage() {
               Once you delete a workspace, there is no going back. Please be certain.
             </p>
           </CardContent>
-          <CardFooter className="flex border-t border-red-500/20 pt-6">
+          <CardFooter className="flex border-t border-destructive/20 pt-6">
             <Button 
               variant="destructive" 
               onClick={handleDelete} 

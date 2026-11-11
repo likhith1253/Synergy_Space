@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
 import { useAuth } from '@/lib/auth-context'
@@ -14,19 +14,21 @@ export function DemoModal() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { demoLogin, isAuthenticated } = useAuth()
+  const pathname = usePathname()
 
   useEffect(() => {
     // Show to unauthenticated users who haven't seen the demo modal
     const hasSeenDemo = localStorage.getItem('hasSeenDemoModal')
     
-    if (!isAuthenticated && !hasSeenDemo) {
+    // The landing page already leads with a demo CTA; only nudge elsewhere.
+    if (!isAuthenticated && !hasSeenDemo && pathname !== '/' && !pathname?.startsWith('/auth')) {
       // Small delay to let the page load first
       const timer = setTimeout(() => {
         setIsOpen(true)
       }, 1000)
       return () => clearTimeout(timer)
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated, pathname])
 
   const handleClose = () => {
     setIsOpen(false)
@@ -88,7 +90,7 @@ export function DemoModal() {
                 <Button 
                   onClick={handleExploreDemo} 
                   disabled={isLoading}
-                  className="w-full h-14 text-lg font-medium bg-accent text-accent-foreground hover:bg-accent/90 flex items-center justify-center gap-2"
+                  className="w-full h-14 text-lg font-medium rounded-full bg-primary text-primary-foreground hover:bg-primary/90 flex items-center justify-center gap-2"
                 >
                   <Compass className="w-5 h-5" />
                   {isLoading ? 'Preparing Demo Workspace...' : 'Explore Live Demo'}

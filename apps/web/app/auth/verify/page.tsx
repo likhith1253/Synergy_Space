@@ -64,7 +64,7 @@ function VerifyEmailContent() {
   }, [token, router]);
 
   return (
-    <Card className="w-full max-w-md mx-auto shadow-xl border border-border bg-background">
+    <Card className="w-full max-w-md mx-auto border-0 bg-transparent shadow-none">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl font-bold tracking-tight">Account Activation</CardTitle>
         <CardDescription>Finalizing real-time microservice security records</CardDescription>
@@ -80,7 +80,7 @@ function VerifyEmailContent() {
 
         {status === "success" && (
           <div className="text-center space-y-3">
-            <CheckCircle2 className="h-12 w-12 text-green-500 mx-auto" />
+            <CheckCircle2 className="h-12 w-12 text-success mx-auto" />
             <h3 className="text-lg font-medium text-foreground">Verification Complete!</h3>
             <p className="text-sm text-muted-foreground">User account moved to active directory. Opening Sign In...</p>
           </div>
@@ -110,7 +110,7 @@ function VerifyEmailContent() {
 
 export default function VerifyEmailPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-muted/20">
+    <div className="flex items-center justify-center">
       <Suspense fallback={<Spinner className="h-8 w-8 text-primary animate-spin" />}>
         <VerifyEmailContent />
       </Suspense>

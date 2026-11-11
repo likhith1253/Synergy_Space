@@ -266,7 +266,7 @@ export default function ProjectPage() {
               <p className="text-sm text-destructive">{inviteError}</p>
             )}
             {inviteSuccess && (
-              <p className="text-sm text-green-600">{inviteSuccess}</p>
+              <p className="text-sm text-success">{inviteSuccess}</p>
             )}
 
             <DialogFooter>

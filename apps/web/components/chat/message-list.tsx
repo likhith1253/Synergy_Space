@@ -17,11 +17,11 @@ export function MessageList({ messages }: MessageListProps) {
     if (messages.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center h-full text-center p-4">
-                <div className="w-12 h-12 bg-zinc-800/50 rounded-full flex items-center justify-center mb-3">
-                    <MessageSquareOff className="w-6 h-6 text-zinc-500" />
+                <div className="w-12 h-12 bg-secondary rounded-full flex items-center justify-center mb-3">
+                    <MessageSquareOff className="w-6 h-6 text-muted-foreground" />
                 </div>
-                <h4 className="text-zinc-300 font-medium mb-1">No messages yet</h4>
-                <p className="text-xs text-zinc-500 max-w-[200px]">
+                <h4 className="text-foreground font-medium mb-1">No messages yet</h4>
+                <p className="text-xs text-muted-foreground max-w-[200px]">
                     Start the conversation by sending a message to your team.
                 </p>
             </div>

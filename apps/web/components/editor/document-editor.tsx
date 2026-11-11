@@ -246,7 +246,7 @@ export function DocumentEditor({
                 </span>
               )}
               {saveError && (
-                <span className="text-sm text-red-500">
+                <span className="text-sm text-destructive">
                   {saveError}
                 </span>
               )}

@@ -126,7 +126,7 @@ export default function TeamPage() {
                                     <p className="text-sm text-destructive">{inviteError}</p>
                                 )}
                                 {inviteSuccess && (
-                                    <p className="text-sm text-green-600">{inviteSuccess}</p>
+                                    <p className="text-sm text-success">{inviteSuccess}</p>
                                 )}
 
                                 <DialogFooter>
@@ -198,7 +198,7 @@ export default function TeamPage() {
                                         {member.role}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-500/10 text-green-600">
+                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success/10 text-success">
                                             Active
                                         </span>
                                     </td>

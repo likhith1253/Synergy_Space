@@ -63,7 +63,7 @@ export default function ProjectsPage() {
   }
 
   if (error) {
-    return <div className="p-8 text-red-500">Error: {error}</div>
+    return <div className="p-8 text-destructive">Error: {error}</div>
   }
 
   return (
@@ -81,7 +81,7 @@ export default function ProjectsPage() {
             Manage all your projects and collaborate with your team.
           </p>
         </div>
-        <Button className="bg-accent text-accent-foreground hover:bg-accent/90">
+        <Button className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90">
           <Plus className="w-4 h-4 mr-2" />
           New Project
         </Button>
@@ -99,7 +99,7 @@ export default function ProjectsPage() {
             <Card className="bg-card border-border hover:border-accent/50 transition-all overflow-hidden group cursor-pointer h-full">
               {/* Gradient Header */}
               <div
-                className={`h-24 bg-gradient-to-r from-purple-500 to-pink-500 opacity-80`}
+                className={`h-24 bg-secondary bg-grid`}
               />
 
               <CardHeader className="-mt-12 mb-4 relative">
@@ -150,7 +150,7 @@ export default function ProjectsPage() {
                     {project.members?.slice(0, 5).map((member: any, i: number) => (
                       <Avatar key={i} className="w-8 h-8 border-2 border-background">
                         <AvatarImage src={member.avatar || undefined} />
-                        <AvatarFallback className="bg-indigo-500 text-white text-xs font-semibold">
+                        <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">
                           {member.name ? member.name.charAt(0) : '?'}
                         </AvatarFallback>
                       </Avatar>

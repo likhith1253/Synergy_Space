@@ -11,7 +11,6 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useAuth } from '@/lib/auth-context'
 import { getInvite, InviteInfo } from '@/lib/api-hooks'
-import { Logo } from '@/components/logo'
 
 function SignUpForm() {
   const router = useRouter()
@@ -138,7 +137,7 @@ function SignUpForm() {
   if (verificationSent) {
     return (
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
-        <Card className="border-border/50 text-center py-8">
+        <Card className="border-0 bg-transparent shadow-none text-center py-8">
           <CardHeader>
             <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
               <Mail className="w-8 h-8 text-primary" />
@@ -167,7 +166,7 @@ function SignUpForm() {
       transition={{ duration: 0.4 }}
       className="w-full max-w-md"
     >
-      <Card className="border-border/50">
+      <Card className="border-0 bg-transparent shadow-none">
         <CardHeader className="space-y-2">
           <motion.div
             initial={{ opacity: 0 }}
@@ -175,18 +174,16 @@ function SignUpForm() {
             transition={{ delay: 0.2 }}
           >
             <div className="flex items-center justify-center mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-accent to-accent/80 rounded-lg flex items-center justify-center">
-                <Logo size={28} className="text-accent-foreground" />
-              </div>
+              
             </div>
           </motion.div>
-          <CardTitle className="text-3xl font-bold text-center">
+          <CardTitle className="font-serif text-5xl font-normal tracking-tight">
             {inviteInfo ? 'Join the Team' : 'Create Account'}
           </CardTitle>
-          <CardDescription className="text-center text-base">
+          <CardDescription className="text-base">
             {inviteInfo
               ? `You've been invited to join ${inviteInfo.project.name}`
-              : 'Join thousands of teams collaborating on Collab'
+              : 'Set up your workspace in under a minute.'
             }
           </CardDescription>
         </CardHeader>
@@ -197,7 +194,7 @@ function SignUpForm() {
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="mb-5 p-4 rounded-lg bg-accent/10 border border-accent/25 flex flex-col gap-3"
+              className="mb-5 p-4 rounded-lg bg-accent-soft border border-transparent flex flex-col gap-3"
             >
               <div>
                 <p className="text-sm font-semibold text-accent">Want to try the platform first?</p>
@@ -206,7 +203,7 @@ function SignUpForm() {
                 type="button"
                 onClick={handleDemoFallback}
                 disabled={isLoading}
-                className="w-full h-10 bg-accent text-accent-foreground hover:bg-accent/90 flex items-center justify-center gap-2 font-semibold"
+                className="w-full h-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 flex items-center justify-center gap-2 font-semibold"
               >
                 <Compass className="w-4 h-4" />
                 {loading ? 'Preparing Demo Workspace...' : 'Launch Demo Workspace'}
@@ -244,7 +241,7 @@ function SignUpForm() {
                     type="button"
                     onClick={handleDemoFallback}
                     disabled={isLoading}
-                    className="w-full h-10 bg-accent text-accent-foreground hover:bg-accent/90 flex items-center justify-center gap-2 font-semibold"
+                    className="w-full h-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 flex items-center justify-center gap-2 font-semibold"
                   >
                     <Compass className="w-4 h-4" />
                     {loading ? 'Preparing Demo Workspace...' : 'Launch Demo Workspace'}
@@ -262,7 +259,7 @@ function SignUpForm() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 disabled={isLoading}
-                className="h-11 bg-secondary border-border/50 text-base"
+                className="h-11 bg-card text-base"
               />
             </div>
 
@@ -275,7 +272,7 @@ function SignUpForm() {
                 value={organizationName}
                 onChange={(e) => setOrganizationName(e.target.value)}
                 disabled={isLoading}
-                className="h-11 bg-secondary border-border/50 text-base"
+                className="h-11 bg-card text-base"
               />
             </div>
 
@@ -288,7 +285,7 @@ function SignUpForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isLoading || !!inviteInfo}
-                className="h-11 bg-secondary border-border/50 text-base"
+                className="h-11 bg-card text-base"
               />
             </div>
 
@@ -301,19 +298,19 @@ function SignUpForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}
-                className="h-11 bg-secondary border-border/50 text-base"
+                className="h-11 bg-card text-base"
               />
               <div className="space-y-2 mt-3">
                 <div className="flex items-center gap-2">
-                  <div className={`w-2 h-2 rounded-full transition-colors ${passwordStrength.hasLength ? 'bg-green-500' : 'bg-muted'}`} />
+                  <div className={`w-2 h-2 rounded-full transition-colors ${passwordStrength.hasLength ? 'bg-success' : 'bg-muted'}`} />
                   <span className="text-xs text-muted-foreground">At least 8 characters</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className={`w-2 h-2 rounded-full transition-colors ${passwordStrength.hasUppercase ? 'bg-green-500' : 'bg-muted'}`} />
+                  <div className={`w-2 h-2 rounded-full transition-colors ${passwordStrength.hasUppercase ? 'bg-success' : 'bg-muted'}`} />
                   <span className="text-xs text-muted-foreground">One uppercase letter</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className={`w-2 h-2 rounded-full transition-colors ${passwordStrength.hasNumber ? 'bg-green-500' : 'bg-muted'}`} />
+                  <div className={`w-2 h-2 rounded-full transition-colors ${passwordStrength.hasNumber ? 'bg-success' : 'bg-muted'}`} />
                   <span className="text-xs text-muted-foreground">One number</span>
                 </div>
               </div>
@@ -328,14 +325,14 @@ function SignUpForm() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 disabled={isLoading}
-                className="h-11 bg-secondary border-border/50 text-base"
+                className="h-11 bg-card text-base"
               />
             </div>
 
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full h-11 bg-accent text-accent-foreground hover:bg-accent/90 text-base font-semibold mt-6"
+              className="w-full h-11 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 text-base font-semibold mt-6"
             >
               {isLoading ? 'Creating Account...' : 'Create Account'}
               {!isLoading && <ArrowRight className="ml-2 h-4 w-4" />}
@@ -355,7 +352,7 @@ function SignUpForm() {
             <Button
               type="button"
               variant="outline"
-              className="w-full h-11 border-border/50 text-foreground hover:bg-secondary text-base font-semibold bg-transparent"
+              className="w-full h-11 rounded-full border-border text-foreground hover:bg-secondary text-base font-medium bg-card"
               asChild
             >
               <Link href="/auth/sign-in">Sign In</Link>

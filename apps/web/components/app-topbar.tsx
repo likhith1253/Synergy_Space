@@ -106,23 +106,19 @@ export function Topbar() {
 
   return (
     <>
-      <div className="h-16 flex items-center justify-between px-6 gap-4">
+      <div className="h-14 flex items-center justify-between px-6 gap-4">
         {/* Left: Search */}
         <div className="flex-1 max-w-md">
           <motion.div
-            animate={{
-              boxShadow: searchFocus
-                ? '0 0 0 2px rgb(99, 102, 241)'
-                : '0 0 0 1px rgb(34, 34, 34)',
-            }}
-            className="relative rounded-lg bg-secondary border border-border transition-all duration-200"
+            animate={{ boxShadow: searchFocus ? '0 0 0 3px var(--accent-soft)' : '0 0 0 0px rgba(0,0,0,0)' }}
+            className={`relative rounded-full border bg-card transition-colors duration-200 ${searchFocus ? 'border-accent' : 'border-border'}`}
           >
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               placeholder="Search documents and projects"
               onFocus={() => setSearchFocus(true)}
               onBlur={() => setSearchFocus(false)}
-              className="pl-10 h-10 bg-secondary border-0 text-foreground placeholder:text-muted-foreground focus-visible:ring-0"
+              className="pl-10 h-9 rounded-full bg-transparent border-0 shadow-none text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-0"
             />
           </motion.div>
         </div>
@@ -138,10 +134,7 @@ export function Topbar() {
             onClick={() => openPanel('ai', aiButtonRef)}
             data-topbar-trigger="ai"
           >
-            <Sparkles className="w-5 h-5" />
-            <span className="absolute -bottom-2 -right-2 w-4 h-4 bg-indigo-500 rounded-full text-white text-xs flex items-center justify-center font-bold">
-              AI
-            </span>
+            <Sparkles className="w-[18px] h-[18px] text-accent" />
           </Button>
 
           {/* Notifications */}
@@ -153,8 +146,7 @@ export function Topbar() {
             onClick={() => openPanel('notifications', notificationButtonRef)}
             data-topbar-trigger="notifications"
           >
-            <Bell className="w-5 h-5" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+            <Bell className="w-[18px] h-[18px]" />
           </Button>
 
           {/* Messages */}
@@ -166,7 +158,7 @@ export function Topbar() {
             onClick={() => openPanel('messages', messagesButtonRef)}
             data-topbar-trigger="messages"
           >
-            <MessageSquare className="w-5 h-5" />
+            <MessageSquare className="w-[18px] h-[18px]" />
           </Button>
 
           {/* User Menu */}
@@ -177,8 +169,8 @@ export function Topbar() {
                 className="h-10 px-2 gap-2 text-foreground hover:bg-secondary"
               >
                 <Avatar className="w-8 h-8">
-                  <AvatarImage src={user?.avatar_url || "https://api.dicebear.com/7.x/avataaars/svg?seed=user"} />
-                  <AvatarFallback className="bg-indigo-500 text-white">
+                  {user?.avatar_url ? <AvatarImage src={user.avatar_url} /> : null}
+                  <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">
                     {user ? getUserInitials(user.name) : 'JD'}
                   </AvatarFallback>
                 </Avatar>
@@ -229,7 +221,7 @@ export function Topbar() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
-          className="fixed z-[9999] w-96 h-[520px] bg-zinc-900 border border-zinc-700 rounded-lg shadow-xl overflow-hidden"
+          className="fixed z-[9999] w-96 h-[520px] bg-popover text-popover-foreground border border-border rounded-2xl shadow-lift overflow-hidden"
           style={{ top: panelPosition.top, right: panelPosition.right }}
           data-topbar-panel="ai"
         >
@@ -242,28 +234,28 @@ export function Topbar() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
-          className="fixed z-[9999] w-80 bg-zinc-900 border border-zinc-700 rounded-lg shadow-xl p-4"
+          className="fixed z-[9999] w-80 bg-popover text-popover-foreground border border-border rounded-2xl shadow-lift p-4"
           style={{ top: panelPosition.top, right: panelPosition.right }}
           data-topbar-panel="notifications"
         >
           <div className="flex items-center justify-between mb-3">
-            <h4 className="font-semibold text-white flex items-center gap-2">
+            <h4 className="font-semibold text-foreground flex items-center gap-2">
               <Bell className="w-4 h-4" />
               Notifications
             </h4>
             <Button
               variant="ghost"
               size="icon"
-              className="h-6 w-6 text-zinc-400 hover:text-white"
+              className="h-6 w-6 text-muted-foreground hover:text-foreground"
               onClick={() => setActivePanel(null)}
             >
               <X className="w-4 h-4" />
             </Button>
           </div>
           <div className="flex flex-col items-center justify-center py-6 text-center">
-            <BellOff className="w-10 h-10 text-zinc-500 mb-3" />
-            <p className="text-sm text-zinc-300">No notifications yet</p>
-            <p className="text-xs text-zinc-500 mt-1">
+            <BellOff className="w-10 h-10 text-muted-foreground mb-3" />
+            <p className="text-sm text-foreground">No notifications yet</p>
+            <p className="text-xs text-muted-foreground mt-1">
               We&apos;ll notify you when something happens
             </p>
           </div>
@@ -275,33 +267,33 @@ export function Topbar() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
-          className="fixed z-[9999] w-80 bg-zinc-900 border border-zinc-700 rounded-lg shadow-xl overflow-hidden flex flex-col"
+          className="fixed z-[9999] w-80 bg-popover text-popover-foreground border border-border rounded-2xl shadow-lift overflow-hidden flex flex-col"
           style={{ top: panelPosition.top, right: panelPosition.right, height: '500px' }}
           data-topbar-panel="messages"
         >
-          <div className="flex items-center justify-between p-4 border-b border-zinc-800 bg-zinc-900 z-10">
-            <h4 className="font-semibold text-white flex items-center gap-2">
+          <div className="flex items-center justify-between p-4 border-b border-border bg-popover z-10">
+            <h4 className="font-semibold text-foreground flex items-center gap-2">
               <MessageSquare className="w-4 h-4" />
               Messages
             </h4>
             <Button
               variant="ghost"
               size="icon"
-              className="h-6 w-6 text-zinc-400 hover:text-white"
+              className="h-6 w-6 text-muted-foreground hover:text-foreground"
               onClick={() => setActivePanel(null)}
             >
               <X className="w-4 h-4" />
             </Button>
           </div>
 
-          <div className="flex-1 overflow-hidden relative bg-zinc-900/50">
+          <div className="flex-1 overflow-hidden relative bg-background">
             {params.id ? (
               <ChatInterface projectId={params.id as string} />
             ) : (
               <div className="flex flex-col items-center justify-center h-full text-center p-6">
-                <MessageSquareOff className="w-10 h-10 text-zinc-500 mb-3" />
-                <p className="text-sm text-zinc-300">No project selected</p>
-                <p className="text-xs text-zinc-500 mt-1">
+                <MessageSquareOff className="w-10 h-10 text-muted-foreground mb-3" />
+                <p className="text-sm text-foreground">No project selected</p>
+                <p className="text-xs text-muted-foreground mt-1">
                   Open a project to start chatting with your team
                 </p>
               </div>
