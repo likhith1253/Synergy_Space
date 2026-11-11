@@ -14,6 +14,14 @@ A real-time collaborative workspace for documents, slides and canvases, with liv
 
 ---
 
+## Demo walkthrough
+
+[![SynergySpace demo walkthrough preview](docs/demo/synergyspace_preview.gif)](docs/demo/synergyspace_demo.mp4)
+
+**[▶ Watch the full product walkthrough (MP4)](docs/demo/synergyspace_demo.mp4)** — recorded locally across all six running services (live document co-editing with a second browser session, real Gemini AI assistant responses, WebSocket team chat, 16:9 slide editor, shared canvas drawing, and Stripe billing).
+
+---
+
 ## Why this project
 
 SynergySpace was built to get real, hands-on experience with **microservices** — not a two-service tutorial, but a complete product split along genuine domain boundaries, deployed to production infrastructure, with authentication enforced across service hops, a polyglot (Node + Python) backend, real-time WebSockets routed through a gateway, and real payments. The story is in [JOURNEY.md](JOURNEY.md); every architectural decision and its trade-offs are in [DESIGN.md](DESIGN.md).
